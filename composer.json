@@ -44,7 +44,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "ProophTest\\EventStore\\Http\\Middleware\\": "tests/",
+            "ProophTest\\EventStore\\Http\\Middleware\\": "tests/"
         }
     },
     "config": {
