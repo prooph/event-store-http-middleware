@@ -10,7 +10,7 @@
 
 declare(strict_types=1);
 
-namespace Prooph\EventStore\Http\Api;
+namespace Prooph\EventStore\Http\Middleware;
 
 use DateTimeImmutable;
 use DateTimeZone;

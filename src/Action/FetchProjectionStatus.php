@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Prooph\EventStore\Http\Middleware\Action;
 
 use Prooph\EventStore\Exception\ProjectionNotFound;
-use Prooph\EventStore\Http\Middleware\Transformer;
 use Prooph\EventStore\Projection\ProjectionManager;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -27,11 +26,6 @@ final class FetchProjectionStatus implements RequestHandlerInterface
     private $projectionManager;
 
     /**
-     * @var Transformer[]
-     */
-    private $transformers = [];
-
-    /**
      * @var ResponseInterface
      */
     private $responsePrototype;
@@ -42,19 +36,8 @@ final class FetchProjectionStatus implements RequestHandlerInterface
         $this->responsePrototype = $responsePrototype;
     }
 
-    public function addTransformer(Transformer $transformer, string ...$names)
-    {
-        foreach ($names as $name) {
-            $this->transformers[$name] = $transformer;
-        }
-    }
-
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        if (! array_key_exists($request->getHeaderLine('Accept'), $this->transformers)) {
-            return $this->responsePrototype->withStatus(415);
-        }
-
         $name = $request->getAttribute('name');
 
         try {
@@ -63,13 +46,6 @@ final class FetchProjectionStatus implements RequestHandlerInterface
             return $this->responsePrototype->withStatus(404);
         }
 
-        //@Todo: Use transformer with ['status' => $status->getName()] but take care of http-lug-event-store!
-        $transformer = $this->transformers[$request->getHeaderLine('Accept')];
-
-        $body = $this->responsePrototype->getBody();
-        $body->rewind();
-        $body->write($status->getName());
-
-        return $this->responsePrototype->withStatus(200)->withBody($body);
+        return $this->responsePrototype->withStatus(200, $status->getName());
     }
 }
