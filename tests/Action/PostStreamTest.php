@@ -99,7 +99,6 @@ class PostStreamTest extends TestCase
      */
     public function it_creates_missing_event_uuid(): void
     {
-        $this->markTestSkipped('Refactor');
         $eventStore = $this->prophesize(EventStore::class);
         $eventStore->hasStream(new StreamName('test-stream'))->willReturn(true)->shouldBeCalled();
         $eventStore->appendTo(
@@ -121,7 +120,7 @@ class PostStreamTest extends TestCase
         $responsePrototype = $this->prophesize(ResponseInterface::class);
         $responsePrototype->withStatus(204)->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new PostStream($eventStore->reveal(), $messageFactory);
+        $action = new PostStream($eventStore->reveal(), $messageFactory, $responsePrototype->reveal());
         $response = $action->handle($request->reveal());
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -266,7 +265,6 @@ class PostStreamTest extends TestCase
      */
     public function it_creates_missing_event_metadata(): void
     {
-        $this->markTestSkipped('Refactor');
         $eventStore = $this->prophesize(EventStore::class);
         $eventStore = $this->prophesize(EventStore::class);
         $eventStore->hasStream(new StreamName('test-stream'))->willReturn(true)->shouldBeCalled();
@@ -289,11 +287,10 @@ class PostStreamTest extends TestCase
         $responsePrototype = $this->prophesize(ResponseInterface::class);
         $responsePrototype->withStatus(204)->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new PostStream($eventStore->reveal(), $messageFactory);
+        $action = new PostStream($eventStore->reveal(), $messageFactory, $responsePrototype->reveal());
         $response = $action->handle($request->reveal());
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertSame(204, $response->getStatusCode());
     }
 
     /**
