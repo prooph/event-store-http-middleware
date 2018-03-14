@@ -2,9 +2,6 @@ language: php
 
 dist: trusty
 
-addons:
-  postgresql: "9.6"
-
 matrix:
   fast_finish: true
   include:
@@ -30,12 +27,9 @@ cache:
 
 before_script:
   - mkdir -p "$HOME/.php-cs-fixer"
-  - cp composer.json.dist composer.json
-  - cp config/pipeline.php.dist config/pipeline.php
   - phpenv config-rm xdebug.ini
   - composer self-update
   - composer update $DEPENDENCIES
-  - psql -c 'create database event_store_tests;' -U postgres
 
 script:
   - if [[ $TEST_COVERAGE == 'true' ]]; then php -dzend_extension=xdebug.so ./vendor/bin/phpunit --coverage-text --coverage-clover ./build/logs/clover.xml; else ./vendor/bin/phpunit; fi
