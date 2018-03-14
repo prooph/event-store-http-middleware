@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Prooph\EventStore\Http\Middleware\Action;
 
-use Prooph\EventStore\Http\Middleware\Transformer;
 use Prooph\EventStore\ReadOnlyEventStore;
 use Prooph\EventStore\StreamName;
 use Psr\Http\Message\ResponseInterface;
