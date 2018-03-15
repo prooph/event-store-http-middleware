@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Prooph\EventStore\Http\Middleware\Container\Action;
 
 use Prooph\EventStore\Http\Middleware\Action\DeleteProjection;
+use Prooph\EventStore\Http\Middleware\ResponsePrototype;
 use Prooph\EventStore\Projection\ProjectionManager;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 
 final class DeleteProjectionFactory
 {
@@ -23,7 +23,7 @@ final class DeleteProjectionFactory
     {
         return new DeleteProjection(
             $container->get(ProjectionManager::class),
-            $container->get(ResponseInterface::class)
+            $container->get(ResponsePrototype::class)
         );
     }
 }

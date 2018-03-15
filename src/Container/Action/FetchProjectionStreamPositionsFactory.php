@@ -13,16 +13,16 @@ declare(strict_types=1);
 namespace Prooph\EventStore\Http\Middleware\Container\Action;
 
 use Prooph\EventStore\Http\Middleware\Action\FetchProjectionStreamPositions;
+use Prooph\EventStore\Http\Middleware\ResponsePrototype;
 use Prooph\EventStore\Http\Middleware\Transformer;
 use Prooph\EventStore\Projection\ProjectionManager;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 
 final class FetchProjectionStreamPositionsFactory
 {
     public function __invoke(ContainerInterface $container): FetchProjectionStreamPositions
     {
-        $actionHandler = new FetchProjectionStreamPositions($container->get(ProjectionManager::class), $container->get(ResponseInterface::class));
+        $actionHandler = new FetchProjectionStreamPositions($container->get(ProjectionManager::class), $container->get(ResponsePrototype::class));
 
         $actionHandler->addTransformer(
             $container->get(Transformer::class),

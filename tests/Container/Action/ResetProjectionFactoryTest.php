@@ -15,6 +15,7 @@ namespace ProophTest\EventStore\Http\Middleware\Container\Action;
 use PHPUnit\Framework\TestCase;
 use Prooph\EventStore\Http\Middleware\Action\ResetProjection;
 use Prooph\EventStore\Http\Middleware\Container\Action\ResetProjectionFactory;
+use Prooph\EventStore\Http\Middleware\ResponsePrototype;
 use Prooph\EventStore\Projection\ProjectionManager;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -31,7 +32,7 @@ class ResetProjectionFactoryTest extends TestCase
 
         $container = $this->prophesize(ContainerInterface::class);
         $container->get(ProjectionManager::class)->willReturn($projectionManager->reveal())->shouldBeCalled();
-        $container->get(ResponseInterface::class)->willReturn($responsePrototype->reveal())->shouldBeCalled();
+        $container->get(ResponsePrototype::class)->willReturn($responsePrototype->reveal())->shouldBeCalled();
 
         $factory = new ResetProjectionFactory();
         $stream = $factory->__invoke($container->reveal());

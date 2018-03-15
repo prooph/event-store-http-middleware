@@ -14,15 +14,15 @@ namespace Prooph\EventStore\Http\Middleware\Container\Action;
 
 use Prooph\EventStore\EventStore;
 use Prooph\EventStore\Http\Middleware\Action\FetchCategoryNames;
+use Prooph\EventStore\Http\Middleware\ResponsePrototype;
 use Prooph\EventStore\Http\Middleware\Transformer;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 
 final class FetchCategoryNamesFactory
 {
     public function __invoke(ContainerInterface $container): FetchCategoryNames
     {
-        $actionHandler = new FetchCategoryNames($container->get(EventStore::class), $container->get(ResponseInterface::class));
+        $actionHandler = new FetchCategoryNames($container->get(EventStore::class), $container->get(ResponsePrototype::class));
 
         $actionHandler->addTransformer(
             $container->get(Transformer::class),

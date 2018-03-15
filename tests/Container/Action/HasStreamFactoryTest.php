@@ -16,6 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Prooph\EventStore\EventStore;
 use Prooph\EventStore\Http\Middleware\Action\HasStream;
 use Prooph\EventStore\Http\Middleware\Container\Action\HasStreamFactory;
+use Prooph\EventStore\Http\Middleware\ResponsePrototype;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -31,7 +32,7 @@ class HasStreamFactoryTest extends TestCase
 
         $container = $this->prophesize(ContainerInterface::class);
         $container->get(EventStore::class)->willReturn($eventStore->reveal())->shouldBeCalled();
-        $container->get(ResponseInterface::class)->willReturn($responsePrototype->reveal())->shouldBeCalled();
+        $container->get(ResponsePrototype::class)->willReturn($responsePrototype->reveal())->shouldBeCalled();
 
         $factory = new HasStreamFactory();
         $stream = $factory->__invoke($container->reveal());
