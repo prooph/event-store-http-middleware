@@ -14,15 +14,15 @@ namespace Prooph\EventStore\Http\Middleware\Container\Action;
 
 use Prooph\EventStore\EventStore;
 use Prooph\EventStore\Http\Middleware\Action\FetchStreamMetadata;
+use Prooph\EventStore\Http\Middleware\ResponsePrototype;
 use Prooph\EventStore\Http\Middleware\Transformer;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 
 final class FetchStreamMetadataFactory
 {
     public function __invoke(ContainerInterface $container): FetchStreamMetadata
     {
-        $actionHandler = new FetchStreamMetadata($container->get(EventStore::class), $container->get(ResponseInterface::class));
+        $actionHandler = new FetchStreamMetadata($container->get(EventStore::class), $container->get(ResponsePrototype::class));
 
         $actionHandler->addTransformer(
             $container->get(Transformer::class),

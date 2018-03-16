@@ -16,6 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Prooph\EventStore\EventStore;
 use Prooph\EventStore\Http\Middleware\Action\FetchStreamNamesRegex;
 use Prooph\EventStore\Http\Middleware\Container\Action\FetchStreamNamesRegexFactory;
+use Prooph\EventStore\Http\Middleware\ResponsePrototype;
 use Prooph\EventStore\Http\Middleware\Transformer;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -33,7 +34,7 @@ class FetchStreamNamesRegexFactoryTest extends TestCase
 
         $container = $this->prophesize(ContainerInterface::class);
         $container->get(EventStore::class)->willReturn($eventStore->reveal())->shouldBeCalled();
-        $container->get(ResponseInterface::class)->willReturn($responsePrototype->reveal())->shouldBeCalled();
+        $container->get(ResponsePrototype::class)->willReturn($responsePrototype->reveal())->shouldBeCalled();
         $container->get(Transformer::class)->willReturn($transformer->reveal())->shouldBeCalled();
 
         $factory = new FetchStreamNamesRegexFactory();

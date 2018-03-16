@@ -14,13 +14,13 @@ namespace Prooph\EventStore\Http\Middleware\Container\Action;
 
 use Prooph\EventStore\EventStore;
 use Prooph\EventStore\Http\Middleware\Action\HasStream;
+use Prooph\EventStore\Http\Middleware\ResponsePrototype;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 
 final class HasStreamFactory
 {
     public function __invoke(ContainerInterface $container): HasStream
     {
-        return new HasStream($container->get(EventStore::class), $container->get(ResponseInterface::class));
+        return new HasStream($container->get(EventStore::class), $container->get(ResponsePrototype::class));
     }
 }
