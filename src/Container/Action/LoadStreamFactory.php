@@ -33,9 +33,7 @@ final class LoadStreamFactory
 
         $actionHandler->addTransformer(
             $container->get(Transformer::class),
-            'application/vnd.eventstore.atom+json',
-            'application/atom+json',
-            'application/json'
+
         );
 
         return $actionHandler;

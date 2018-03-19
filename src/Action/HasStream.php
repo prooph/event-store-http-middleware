@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Prooph\EventStore\Http\Middleware\Action;
 
+use Prooph\EventStore\Http\Middleware\ResponseFactory;
 use Prooph\EventStore\ReadOnlyEventStore;
 use Prooph\EventStore\StreamName;
 use Psr\Http\Message\ResponseInterface;
@@ -26,14 +27,14 @@ final class HasStream implements RequestHandlerInterface
     private $eventStore;
 
     /**
-     * @var ResponseInterface
+     * @var ResponseFactory
      */
-    private $responsePrototype;
+    private $responseFactory;
 
-    public function __construct(ReadOnlyEventStore $eventStore, ResponseInterface $responsePrototype)
+    public function __construct(ReadOnlyEventStore $eventStore, ResponseFactory $responseFactory)
     {
         $this->eventStore = $eventStore;
-        $this->responsePrototype = $responsePrototype;
+        $this->responseFactory = $responseFactory;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -41,9 +42,9 @@ final class HasStream implements RequestHandlerInterface
         $streamName = urldecode($request->getAttribute('streamname'));
 
         if ($this->eventStore->hasStream(new StreamName($streamName))) {
-            return $this->responsePrototype->withStatus(200);
+            return $this->responseFactory->createEmptyResponse($request, 200);
         }
 
-        return $this->responsePrototype->withStatus(404);
+        return $this->responseFactory->createNotFoundResponse($request);
     }
 }

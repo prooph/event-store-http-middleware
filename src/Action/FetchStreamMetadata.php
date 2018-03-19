@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Prooph\EventStore\Http\Middleware\Action;
 
 use Prooph\EventStore\Exception\StreamNotFound;
-use Prooph\EventStore\Http\Middleware\Transformer;
+use Prooph\EventStore\Http\Middleware\ResponseFactory;
 use Prooph\EventStore\ReadOnlyEventStore;
 use Prooph\EventStore\StreamName;
 use Psr\Http\Message\ResponseInterface;
@@ -28,44 +28,26 @@ final class FetchStreamMetadata implements RequestHandlerInterface
     private $eventStore;
 
     /**
-     * @var Transformer[]
+     * @var ResponseFactory
      */
-    private $transformers = [];
+    private $responseFactory;
 
-    /**
-     * @var ResponseInterface
-     */
-    private $responsePrototype;
-
-    public function __construct(ReadOnlyEventStore $eventStore, ResponseInterface $responsePrototype)
+    public function __construct(ReadOnlyEventStore $eventStore, ResponseFactory $responseFactory)
     {
         $this->eventStore = $eventStore;
-        $this->responsePrototype = $responsePrototype;
-    }
-
-    public function addTransformer(Transformer $transformer, string ...$names)
-    {
-        foreach ($names as $name) {
-            $this->transformers[$name] = $transformer;
-        }
+        $this->responseFactory = $responseFactory;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        if (! array_key_exists($request->getHeaderLine('Accept'), $this->transformers)) {
-            return $this->responsePrototype->withStatus(415);
-        }
-
         $streamName = urldecode($request->getAttribute('streamname'));
 
         try {
             $metadata = $this->eventStore->fetchStreamMetadata(new StreamName($streamName));
         } catch (StreamNotFound $e) {
-            return $this->responsePrototype->withStatus(404);
+            return $this->responseFactory->createNotFoundResponse($request);
         }
 
-        $transformer = $this->transformers[$request->getHeaderLine('Accept')];
-
-        return $transformer->createResponse($metadata);
+        return $this->responseFactory->createJsonResponse($request, $metadata);
     }
 }

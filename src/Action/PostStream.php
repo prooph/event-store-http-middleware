@@ -18,6 +18,7 @@ use DateTimeZone;
 use Prooph\Common\Messaging\MessageDataAssertion;
 use Prooph\Common\Messaging\MessageFactory;
 use Prooph\EventStore\EventStore;
+use Prooph\EventStore\Http\Middleware\ResponseFactory;
 use Prooph\EventStore\Stream;
 use Prooph\EventStore\StreamName;
 use Prooph\EventStore\TransactionalEventStore;
@@ -46,34 +47,34 @@ final class PostStream implements RequestHandlerInterface
     ];
 
     /**
-     * @var ResponseInterface
+     * @var ResponseFactory
      */
-    private $responsePrototype;
+    private $responseFactory;
 
-    public function __construct(EventStore $eventStore, MessageFactory $messageFactory, ResponseInterface $responsePrototype)
+    public function __construct(EventStore $eventStore, MessageFactory $messageFactory, ResponseFactory $responseFactory)
     {
         $this->eventStore = $eventStore;
         $this->messageFactory = $messageFactory;
-        $this->responsePrototype = $responsePrototype;
+        $this->responseFactory = $responseFactory;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         if (! in_array($request->getHeaderLine('Content-Type'), $this->validRequestContentTypes)) {
-            return $this->responsePrototype->withStatus(415);
+            return $this->responseFactory->createUnsupportedMediaTypeResponse($request);
         }
 
         $readEvents = $request->getParsedBody();
 
         if (! is_array($readEvents) || empty($readEvents)) {
-            return $this->responsePrototype->withStatus(400, 'Write request body invalid');
+            return $this->responseFactory->createBadRequestResponse($request, 'Write request body invalid');
         }
 
         $events = [];
 
         foreach ($readEvents as $event) {
             if (! is_array($event)) {
-                return $this->responsePrototype->withStatus(400, 'Write request body invalid');
+                return $this->responseFactory->createBadRequestResponse($request, 'Write request body invalid');
             }
 
             if (! isset($event['uuid'])) {
@@ -81,15 +82,15 @@ final class PostStream implements RequestHandlerInterface
             }
 
             if (! is_string($event['uuid']) || ! Uuid::isValid($event['uuid'])) {
-                return $this->responsePrototype->withStatus(400, 'Invalid event uuid provided');
+                return $this->responseFactory->createBadRequestResponse($request, 'Invalid event uuid provided');
             }
 
             if (! isset($event['message_name'])) {
-                return $this->responsePrototype->withStatus(400, 'Empty event name provided');
+                return $this->responseFactory->createBadRequestResponse($request, 'Empty event name provided');
             }
 
             if (! is_string($event['message_name']) || strlen($event['message_name']) === 0) {
-                return $this->responsePrototype->withStatus(400, 'Invalid event name provided');
+                return $this->responseFactory->createBadRequestResponse($request, 'Invalid event name provided');
             }
 
             if (! isset($event['payload'])) {
@@ -99,7 +100,7 @@ final class PostStream implements RequestHandlerInterface
             try {
                 MessageDataAssertion::assertPayload($event['payload']);
             } catch (Throwable $e) {
-                return $this->responsePrototype->withStatus(400, 'Invalid event payload provided');
+                return $this->responseFactory->createBadRequestResponse($request, 'Invalid event payload provided');
             }
 
             if (! isset($event['metadata'])) {
@@ -109,7 +110,7 @@ final class PostStream implements RequestHandlerInterface
             try {
                 MessageDataAssertion::assertMetadata($event['metadata']);
             } catch (Throwable $e) {
-                return $this->responsePrototype->withStatus(400, 'Invalid event metadata provided');
+                return $this->responseFactory->createBadRequestResponse($request, 'Invalid event metadata provided');
             }
 
             if (! isset($event['created_at'])) {
@@ -123,13 +124,13 @@ final class PostStream implements RequestHandlerInterface
             }
 
             if (! $event['created_at'] instanceof DateTimeImmutable) {
-                return $this->responsePrototype->withStatus(400, 'Invalid created at provided, expected format: Y-m-d\TH:i:s.u');
+                return $this->responseFactory->createBadRequestResponse($request, 'Invalid created at provided, expected format: Y-m-d\TH:i:s.u');
             }
 
             try {
                 $events[] = $this->messageFactory->createMessageFromArray($event['message_name'], $event);
             } catch (Throwable $e) {
-                return $this->responsePrototype->withStatus(400, 'Could not create event instance');
+                return $this->responseFactory->createBadRequestResponse($request, 'Could not create event instance');
             }
         }
 
@@ -150,13 +151,13 @@ final class PostStream implements RequestHandlerInterface
                 $this->eventStore->rollback();
             }
 
-            return $this->responsePrototype->withStatus(500, 'Cannot create or append to stream');
+            return $this->responseFactory->createInternalServerErrorResponse($request, 'Cannot create or append to stream');
         }
 
         if ($this->eventStore instanceof TransactionalEventStore) {
             $this->eventStore->commit();
         }
 
-        return $this->responsePrototype->withStatus(204);
+        return $this->responseFactory->createEmptyResponse($request, 204);
     }
 }

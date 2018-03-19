@@ -15,7 +15,7 @@ namespace Prooph\EventStore\Http\Middleware\Action;
 use Prooph\Common\Messaging\MessageConverter;
 use Prooph\EventStore\Exception\StreamNotFound;
 use Prooph\EventStore\Http\Middleware\Model\MetadataMatcherBuilder;
-use Prooph\EventStore\Http\Middleware\Transformer;
+use Prooph\EventStore\Http\Middleware\ResponseFactory;
 use Prooph\EventStore\Http\Middleware\UrlHelper;
 use Prooph\EventStore\ReadOnlyEventStore;
 use Prooph\EventStore\StreamName;
@@ -25,6 +25,12 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class LoadStream implements RequestHandlerInterface
 {
+    public const SUPPORTED_CONTENT_TYPES = [
+        'application/vnd.eventstore.atom+json',
+        'application/atom+json',
+        'application/json'
+    ];
+
     /**
      * @var ReadOnlyEventStore
      */
@@ -36,48 +42,34 @@ final class LoadStream implements RequestHandlerInterface
     private $messageConverter;
 
     /**
-     * @var Transformer[]
-     */
-    private $transformers = [];
-
-    /**
      * @var UrlHelper
      */
     private $urlHelper;
 
     /**
-     * @var ResponseInterface
+     * @var ResponseFactory
      */
-    private $responsePrototype;
+    private $responseFactory;
 
     public function __construct(
         ReadOnlyEventStore $eventStore,
         MessageConverter $messageConverter,
         UrlHelper $urlHelper,
-        ResponseInterface $responsePrototype
+        ResponseFactory $responseFactory
     ) {
         $this->eventStore = $eventStore;
         $this->messageConverter = $messageConverter;
         $this->urlHelper = $urlHelper;
-        $this->responsePrototype = $responsePrototype;
-    }
-
-    public function addTransformer(Transformer $transformer, string ...$names)
-    {
-        foreach ($names as $name) {
-            $this->transformers[$name] = $transformer;
-        }
+        $this->responseFactory = $responseFactory;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $streamName = urldecode($request->getAttribute('streamname'));
 
-        if (! array_key_exists($request->getHeaderLine('Accept'), $this->transformers)) {
+        if (! array_key_exists($request->getHeaderLine('Accept'), self::SUPPORTED_CONTENT_TYPES)) {
             return $this->returnDescription($request, $streamName);
         }
-
-        $transformer = $this->transformers[$request->getHeaderLine('Accept')];
 
         $start = $request->getAttribute('start');
 
@@ -92,7 +84,7 @@ final class LoadStream implements RequestHandlerInterface
         $direction = $request->getAttribute('direction');
 
         if (PHP_INT_MAX === $start && 'forward' === $direction) {
-            return $this->responsePrototype->withStatus(400);
+            return $this->responseFactory->createBadRequestResponse($request);
         }
 
         $metadataMatcherBuilder = new MetadataMatcherBuilder();
@@ -105,11 +97,11 @@ final class LoadStream implements RequestHandlerInterface
                 $streamEvents = $this->eventStore->load(new StreamName($streamName), $start, $count, $metadataMatcher);
             }
         } catch (StreamNotFound $e) {
-            return $this->responsePrototype->withStatus(404);
+            return $this->responseFactory->createNotFoundResponse($request);
         }
 
         if (! $streamEvents->valid()) {
-            return $this->responsePrototype->withStatus(400, '\'' . $start . '\' is not a valid event number');
+            return $this->responseFactory->createBadRequestResponse($request, '\'' . $start . '\' is not a valid event number');
         }
 
         $entries = [];
@@ -157,7 +149,7 @@ final class LoadStream implements RequestHandlerInterface
             'entries' => $entries,
         ];
 
-        return $transformer->createResponse($result);
+        return $this->responseFactory->createJsonResponse($request, $result);
     }
 
     private function returnDescription(ServerRequestInterface $request, string $streamName): ResponseInterface
@@ -166,9 +158,7 @@ final class LoadStream implements RequestHandlerInterface
             'streamname' => urlencode($streamName),
         ]);
 
-        $body = $this->responsePrototype->getBody();
-        $body->rewind();
-        $body->write(json_encode([
+        return $this->responseFactory->createJsonResponse($request, [
             'title' => 'Description document for \'' . $streamName . '\'',
             'description' => 'The description document will be presented when no accept header is present or it was requested',
             '_links' => [
@@ -180,14 +170,10 @@ final class LoadStream implements RequestHandlerInterface
                 ],
                 'stream' => [
                     'href' => $id,
-                    'supportedContentTypes' => array_keys($this->transformers),
+                    'supportedContentTypes' => self::SUPPORTED_CONTENT_TYPES,
                 ],
             ],
-        ]));
-
-        return $this->responsePrototype->withStatus(200)
-            ->withAddedHeader('Content-Type', 'application/vnd.eventstore.streamdesc+json; charset=utf-8')
-            ->withBody($body);
+        ])->withAddedHeader('Content-Type', 'application/vnd.eventstore.streamdesc+json; charset=utf-8');
     }
 
     private function host(ServerRequestInterface $request): string

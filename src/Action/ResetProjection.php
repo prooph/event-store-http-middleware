@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Prooph\EventStore\Http\Middleware\Action;
 
 use Prooph\EventStore\Exception\ProjectionNotFound;
+use Prooph\EventStore\Http\Middleware\ResponseFactory;
 use Prooph\EventStore\Projection\ProjectionManager;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -26,14 +27,14 @@ final class ResetProjection implements RequestHandlerInterface
     private $projectionManager;
 
     /**
-     * @var ResponseInterface
+     * @var ResponseFactory
      */
-    private $responsePrototype;
+    private $responseFactory;
 
-    public function __construct(ProjectionManager $projectionManager, ResponseInterface $responsePrototype)
+    public function __construct(ProjectionManager $projectionManager, ResponseFactory $responseFactory)
     {
         $this->projectionManager = $projectionManager;
-        $this->responsePrototype = $responsePrototype;
+        $this->responseFactory = $responseFactory;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -43,9 +44,9 @@ final class ResetProjection implements RequestHandlerInterface
         try {
             $this->projectionManager->resetProjection($projectionName);
         } catch (ProjectionNotFound $e) {
-            return $this->responsePrototype->withStatus(404);
+            return $this->responseFactory->createNotFoundResponse($request);
         }
 
-        return $this->responsePrototype->withStatus(204);
+        return $this->responseFactory->createEmptyResponse($request, 204);
     }
 }
