@@ -14,6 +14,7 @@ namespace Prooph\EventStore\Http\Middleware\Action;
 
 use Prooph\EventStore\EventStore;
 use Prooph\EventStore\Exception\StreamNotFound;
+use Prooph\EventStore\Http\Middleware\ResponseFactory;
 use Prooph\EventStore\StreamName;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -33,14 +34,14 @@ final class UpdateStreamMetadata implements RequestHandlerInterface
     ];
 
     /**
-     * @var ResponseInterface
+     * @var ResponseFactory
      */
-    private $responsePrototype;
+    private $responseFactory;
 
-    public function __construct(EventStore $eventStore, ResponseInterface $responsePrototype)
+    public function __construct(EventStore $eventStore, ResponseFactory $responseFactory)
     {
         $this->eventStore = $eventStore;
-        $this->responsePrototype = $responsePrototype;
+        $this->responseFactory = $responseFactory;
     }
 
     /**
@@ -51,7 +52,7 @@ final class UpdateStreamMetadata implements RequestHandlerInterface
         $streamName = urldecode($request->getAttribute('streamname'));
 
         if (! in_array($request->getHeaderLine('Content-Type'), $this->validRequestContentTypes)) {
-            return $this->responsePrototype->withStatus(415);
+            return $this->responseFactory->createUnsupportedMediaTypeResponse($request);
         }
 
         $metadata = $request->getParsedBody();
@@ -59,9 +60,9 @@ final class UpdateStreamMetadata implements RequestHandlerInterface
         try {
             $this->eventStore->updateStreamMetadata(new StreamName($streamName), $metadata);
         } catch (StreamNotFound $e) {
-            return $this->responsePrototype->withStatus(404);
+            return $this->responseFactory->createNotFoundResponse($request);
         }
 
-        return $this->responsePrototype->withStatus(204);
+        return $this->responseFactory->createEmptyResponse($request, 204);
     }
 }

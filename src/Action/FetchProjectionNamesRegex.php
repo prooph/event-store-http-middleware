@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Prooph\EventStore\Http\Middleware\Action;
 
-use Prooph\EventStore\Http\Middleware\Transformer;
+use Prooph\EventStore\Http\Middleware\ResponseFactory;
 use Prooph\EventStore\Projection\ProjectionManager;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -29,34 +29,18 @@ final class FetchProjectionNamesRegex implements RequestHandlerInterface
     private $projectionManager;
 
     /**
-     * @var Transformer[]
+     * @var ResponseFactory
      */
-    private $transformers = [];
+    private $responseFactory;
 
-    /**
-     * @var ResponseInterface
-     */
-    private $responsePrototype;
-
-    public function __construct(ProjectionManager $projectionManager, ResponseInterface $responsePrototype)
+    public function __construct(ProjectionManager $projectionManager, ResponseFactory $responseFactory)
     {
         $this->projectionManager = $projectionManager;
-        $this->responsePrototype = $responsePrototype;
-    }
-
-    public function addTransformer(Transformer $transformer, string ...$names)
-    {
-        foreach ($names as $name) {
-            $this->transformers[$name] = $transformer;
-        }
+        $this->responseFactory = $responseFactory;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        if (! array_key_exists($request->getHeaderLine('Accept'), $this->transformers)) {
-            return $this->responsePrototype->withStatus(415);
-        }
-
         $filter = urldecode($request->getAttribute('filter'));
 
         $queryParams = $request->getQueryParams();
@@ -66,8 +50,6 @@ final class FetchProjectionNamesRegex implements RequestHandlerInterface
 
         $projectionNames = $this->projectionManager->fetchProjectionNamesRegex($filter, (int) $limit, (int) $offset);
 
-        $transformer = $this->transformers[$request->getHeaderLine('Accept')];
-
-        return $transformer->createResponse($projectionNames);
+        return $this->responseFactory->createJsonResponse($request, $projectionNames);
     }
 }
