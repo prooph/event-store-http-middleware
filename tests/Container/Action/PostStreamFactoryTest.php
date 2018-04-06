@@ -12,15 +12,14 @@ declare(strict_types=1);
 
 namespace ProophTest\EventStore\Http\Middleware\Container\Action;
 
+use Interop\Http\Factory\ResponseFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prooph\Common\Messaging\MessageFactory;
 use Prooph\EventStore\EventStore;
 use Prooph\EventStore\Http\Middleware\Action\PostStream;
 use Prooph\EventStore\Http\Middleware\Container\Action\PostStreamFactory;
 use Prooph\EventStore\Http\Middleware\GenericEventFactory;
-use Prooph\EventStore\Http\Middleware\ResponsePrototype;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 
 class PostStreamFactoryTest extends TestCase
 {
@@ -31,12 +30,12 @@ class PostStreamFactoryTest extends TestCase
     {
         $eventStore = $this->prophesize(EventStore::class);
         $messageFactory = $this->prophesize(MessageFactory::class);
-        $responsePrototype = $this->prophesize(ResponseInterface::class);
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
 
         $container = $this->prophesize(ContainerInterface::class);
         $container->get(EventStore::class)->willReturn($eventStore->reveal())->shouldBeCalled();
         $container->get(GenericEventFactory::class)->willReturn($messageFactory->reveal())->shouldBeCalled();
-        $container->get(ResponsePrototype::class)->willReturn($responsePrototype->reveal())->shouldBeCalled();
+        $container->get(ResponseFactoryInterface::class)->willReturn($responseFactory->reveal())->shouldBeCalled();
 
         $factory = new PostStreamFactory();
         $stream = $factory->__invoke($container->reveal());

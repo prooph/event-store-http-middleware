@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Prooph\EventStore\Http\Middleware\Action;
 
+use Interop\Http\Factory\ResponseFactoryInterface;
 use Prooph\EventStore\EventStore;
 use Prooph\EventStore\Exception\StreamNotFound;
 use Prooph\EventStore\StreamName;
@@ -27,14 +28,14 @@ final class DeleteStream implements RequestHandlerInterface
     private $eventStore;
 
     /**
-     * @var ResponseInterface
+     * @var ResponseFactoryInterface
      */
-    private $responsePrototype;
+    private $responseFactory;
 
-    public function __construct(EventStore $eventStore, ResponseInterface $responsePrototype)
+    public function __construct(EventStore $eventStore, ResponseFactoryInterface $responseFactory)
     {
         $this->eventStore = $eventStore;
-        $this->responsePrototype = $responsePrototype;
+        $this->responseFactory = $responseFactory;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -44,9 +45,9 @@ final class DeleteStream implements RequestHandlerInterface
         try {
             $this->eventStore->delete(new StreamName($streamName));
         } catch (StreamNotFound $e) {
-            return $this->responsePrototype->withStatus(404);
+            return $this->responseFactory->createResponse(404);
         }
 
-        return $this->responsePrototype->withStatus(204);
+        return $this->responseFactory->createResponse(204);
     }
 }

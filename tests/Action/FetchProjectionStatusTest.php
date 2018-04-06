@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace ProophTest\EventStore\Http\Middleware\Action;
 
+use Interop\Http\Factory\ResponseFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prooph\EventStore\Exception\ProjectionNotFound;
 use Prooph\EventStore\Http\Middleware\Action\FetchProjectionStatus;
@@ -35,8 +36,10 @@ class FetchProjectionStatusTest extends TestCase
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
         $responsePrototype->withStatus(200, ProjectionStatus::RUNNING()->getName())->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse()->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new FetchProjectionStatus($projectionManager->reveal(), $responsePrototype->reveal());
+        $action = new FetchProjectionStatus($projectionManager->reveal(), $responseFactory->reveal());
 
         $response = $action->handle($request->reveal());
 
@@ -55,9 +58,10 @@ class FetchProjectionStatusTest extends TestCase
         $request->getAttribute('name')->willReturn('unknown')->shouldBeCalled();
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
-        $responsePrototype->withStatus(404)->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse(404)->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new FetchProjectionStatus($projectionManager->reveal(), $responsePrototype->reveal());
+        $action = new FetchProjectionStatus($projectionManager->reveal(), $responseFactory->reveal());
 
         $response = $action->handle($request->reveal());
 

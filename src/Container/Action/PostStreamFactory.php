@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace Prooph\EventStore\Http\Middleware\Container\Action;
 
+use Interop\Http\Factory\ResponseFactoryInterface;
 use Prooph\EventStore\EventStore;
 use Prooph\EventStore\Http\Middleware\Action\PostStream;
 use Prooph\EventStore\Http\Middleware\GenericEventFactory;
-use Prooph\EventStore\Http\Middleware\ResponsePrototype;
 use Psr\Container\ContainerInterface;
 
 final class PostStreamFactory
@@ -25,7 +25,7 @@ final class PostStreamFactory
         return new PostStream(
             $container->get(EventStore::class),
             $container->get(GenericEventFactory::class),
-            $container->get(ResponsePrototype::class)
+            $container->get(ResponseFactoryInterface::class)
         );
     }
 }

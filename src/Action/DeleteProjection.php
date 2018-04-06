@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Prooph\EventStore\Http\Middleware\Action;
 
+use Interop\Http\Factory\ResponseFactoryInterface;
 use Prooph\EventStore\Exception\ProjectionNotFound;
 use Prooph\EventStore\Projection\ProjectionManager;
 use Psr\Http\Message\ResponseInterface;
@@ -26,14 +27,14 @@ final class DeleteProjection implements RequestHandlerInterface
     private $projectionManager;
 
     /**
-     * @var ResponseInterface
+     * @var ResponseFactoryInterface
      */
-    private $responsePrototype;
+    private $responseFactory;
 
-    public function __construct(ProjectionManager $projectionManager, ResponseInterface $responsePrototype)
+    public function __construct(ProjectionManager $projectionManager, ResponseFactoryInterface $responseFactory)
     {
         $this->projectionManager = $projectionManager;
-        $this->responsePrototype = $responsePrototype;
+        $this->responseFactory = $responseFactory;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -53,9 +54,9 @@ final class DeleteProjection implements RequestHandlerInterface
         try {
             $this->projectionManager->deleteProjection($projectionName, $deleteEmittedEvents);
         } catch (ProjectionNotFound $e) {
-            return $this->responsePrototype->withStatus(404);
+            return $this->responseFactory->createResponse(404);
         }
 
-        return $this->responsePrototype->withStatus(204);
+        return $this->responseFactory->createResponse(204);
     }
 }

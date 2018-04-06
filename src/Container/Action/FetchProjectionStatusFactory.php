@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Prooph\EventStore\Http\Middleware\Container\Action;
 
+use Interop\Http\Factory\ResponseFactoryInterface;
 use Prooph\EventStore\Http\Middleware\Action\FetchProjectionStatus;
-use Prooph\EventStore\Http\Middleware\ResponsePrototype;
 use Prooph\EventStore\Projection\ProjectionManager;
 use Psr\Container\ContainerInterface;
 
@@ -21,7 +21,7 @@ final class FetchProjectionStatusFactory
 {
     public function __invoke(ContainerInterface $container): FetchProjectionStatus
     {
-        $actionHandler = new FetchProjectionStatus($container->get(ProjectionManager::class), $container->get(ResponsePrototype::class));
+        $actionHandler = new FetchProjectionStatus($container->get(ProjectionManager::class), $container->get(ResponseFactoryInterface::class));
 
         return $actionHandler;
     }
