@@ -15,6 +15,7 @@ namespace ProophTest\EventStore\Http\Middleware\Action;
 use ArrayIterator;
 use DateTimeImmutable;
 use DateTimeZone;
+use Interop\Http\Factory\ResponseFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prooph\Common\Messaging\MessageFactory;
 use Prooph\EventStore\EventStore;
@@ -44,9 +45,10 @@ class PostStreamTest extends TestCase
         $request->getHeaderLine('Content-Type')->willReturn('text/html')->shouldBeCalled();
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
-        $responsePrototype->withStatus(415)->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse(415)->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new PostStream($eventStore->reveal(), $messageFactory->reveal(), $responsePrototype->reveal());
+        $action = new PostStream($eventStore->reveal(), $messageFactory->reveal(), $responseFactory->reveal());
         $response = $action->handle($request->reveal());
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -66,8 +68,10 @@ class PostStreamTest extends TestCase
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
         $responsePrototype->withStatus(400, 'Write request body invalid')->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse()->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new PostStream($eventStore->reveal(), $messageFactory->reveal(), $responsePrototype->reveal());
+        $action = new PostStream($eventStore->reveal(), $messageFactory->reveal(), $responseFactory->reveal());
         $response = $action->handle($request->reveal());
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -87,8 +91,10 @@ class PostStreamTest extends TestCase
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
         $responsePrototype->withStatus(400, 'Write request body invalid')->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse()->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new PostStream($eventStore->reveal(), $messageFactory->reveal(), $responsePrototype->reveal());
+        $action = new PostStream($eventStore->reveal(), $messageFactory->reveal(), $responseFactory->reveal());
         $response = $action->handle($request->reveal());
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -118,9 +124,10 @@ class PostStreamTest extends TestCase
         ]])->shouldBeCalled();
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
-        $responsePrototype->withStatus(204)->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse(204)->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new PostStream($eventStore->reveal(), $messageFactory, $responsePrototype->reveal());
+        $action = new PostStream($eventStore->reveal(), $messageFactory, $responseFactory->reveal());
         $response = $action->handle($request->reveal());
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -144,8 +151,10 @@ class PostStreamTest extends TestCase
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
         $responsePrototype->withStatus(400, 'Invalid event uuid provided')->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse()->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new PostStream($eventStore->reveal(), $messageFactory->reveal(), $responsePrototype->reveal());
+        $action = new PostStream($eventStore->reveal(), $messageFactory->reveal(), $responseFactory->reveal());
         $response = $action->handle($request->reveal());
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -169,8 +178,10 @@ class PostStreamTest extends TestCase
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
         $responsePrototype->withStatus(400, 'Empty event name provided')->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse()->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new PostStream($eventStore->reveal(), $messageFactory->reveal(), $responsePrototype->reveal());
+        $action = new PostStream($eventStore->reveal(), $messageFactory->reveal(), $responseFactory->reveal());
         $response = $action->handle($request->reveal());
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -195,8 +206,10 @@ class PostStreamTest extends TestCase
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
         $responsePrototype->withStatus(400, 'Invalid event name provided')->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse()->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new PostStream($eventStore->reveal(), $messageFactory->reveal(), $responsePrototype->reveal());
+        $action = new PostStream($eventStore->reveal(), $messageFactory->reveal(), $responseFactory->reveal());
         $response = $action->handle($request->reveal());
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -226,9 +239,10 @@ class PostStreamTest extends TestCase
         ]])->shouldBeCalled();
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
-        $responsePrototype->withStatus(204)->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse(204)->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new PostStream($eventStore->reveal(), $messageFactory, $responsePrototype->reveal());
+        $action = new PostStream($eventStore->reveal(), $messageFactory, $responseFactory->reveal());
         $response = $action->handle($request->reveal());
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -253,8 +267,10 @@ class PostStreamTest extends TestCase
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
         $responsePrototype->withStatus(400, 'Invalid event payload provided')->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse()->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new PostStream($eventStore->reveal(), $messageFactory->reveal(), $responsePrototype->reveal());
+        $action = new PostStream($eventStore->reveal(), $messageFactory->reveal(), $responseFactory->reveal());
         $response = $action->handle($request->reveal());
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -285,9 +301,10 @@ class PostStreamTest extends TestCase
         ]])->shouldBeCalled();
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
-        $responsePrototype->withStatus(204)->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse(204)->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new PostStream($eventStore->reveal(), $messageFactory, $responsePrototype->reveal());
+        $action = new PostStream($eventStore->reveal(), $messageFactory, $responseFactory->reveal());
         $response = $action->handle($request->reveal());
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -312,8 +329,10 @@ class PostStreamTest extends TestCase
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
         $responsePrototype->withStatus(400, 'Invalid event metadata provided')->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse()->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new PostStream($eventStore->reveal(), $messageFactory->reveal(), $responsePrototype->reveal());
+        $action = new PostStream($eventStore->reveal(), $messageFactory->reveal(), $responseFactory->reveal());
         $response = $action->handle($request->reveal());
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -340,8 +359,10 @@ class PostStreamTest extends TestCase
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
         $responsePrototype->withStatus(400, 'Invalid created at provided, expected format: Y-m-d\TH:i:s.u')->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse()->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new PostStream($eventStore->reveal(), $messageFactory->reveal(), $responsePrototype->reveal());
+        $action = new PostStream($eventStore->reveal(), $messageFactory->reveal(), $responseFactory->reveal());
         $response = $action->handle($request->reveal());
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -377,8 +398,10 @@ class PostStreamTest extends TestCase
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
         $responsePrototype->withStatus(400, 'Could not create event instance')->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse()->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new PostStream($eventStore->reveal(), $messageFactory->reveal(), $responsePrototype->reveal());
+        $action = new PostStream($eventStore->reveal(), $messageFactory->reveal(), $responseFactory->reveal());
         $response = $action->handle($request->reveal());
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -409,8 +432,10 @@ class PostStreamTest extends TestCase
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
         $responsePrototype->withStatus(500, 'Cannot create or append to stream')->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse()->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new PostStream($eventStore->reveal(), $messageFactory, $responsePrototype->reveal());
+        $action = new PostStream($eventStore->reveal(), $messageFactory, $responseFactory->reveal());
         $response = $action->handle($request->reveal());
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -458,9 +483,10 @@ class PostStreamTest extends TestCase
         $request->getAttribute('streamname')->willReturn('test-stream')->shouldBeCalled();
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
-        $responsePrototype->withStatus(204)->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse(204)->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new PostStream($eventStore->reveal(), $messageFactory, $responsePrototype->reveal());
+        $action = new PostStream($eventStore->reveal(), $messageFactory, $responseFactory->reveal());
         $response = $action->handle($request->reveal());
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -505,9 +531,10 @@ class PostStreamTest extends TestCase
         $request->getAttribute('streamname')->willReturn('test-stream')->shouldBeCalled();
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
-        $responsePrototype->withStatus(204)->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse(204)->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new PostStream($eventStore->reveal(), $messageFactory, $responsePrototype->reveal());
+        $action = new PostStream($eventStore->reveal(), $messageFactory, $responseFactory->reveal());
         $response = $action->handle($request->reveal());
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -553,9 +580,10 @@ class PostStreamTest extends TestCase
         $request->getAttribute('streamname')->willReturn('test-stream')->shouldBeCalled();
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
-        $responsePrototype->withStatus(204)->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse(204)->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new PostStream($eventStore->reveal(), $messageFactory, $responsePrototype->reveal());
+        $action = new PostStream($eventStore->reveal(), $messageFactory, $responseFactory->reveal());
         $response = $action->handle($request->reveal());
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -598,9 +626,10 @@ class PostStreamTest extends TestCase
         $request->getAttribute('streamname')->willReturn('test-stream')->shouldBeCalled();
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
-        $responsePrototype->withStatus(204)->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse(204)->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new PostStream($eventStore->reveal(), $messageFactory, $responsePrototype->reveal());
+        $action = new PostStream($eventStore->reveal(), $messageFactory, $responseFactory->reveal());
         $response = $action->handle($request->reveal());
 
         $this->assertInstanceOf(ResponseInterface::class, $response);

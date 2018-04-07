@@ -16,6 +16,7 @@ use ArrayIterator;
 use DateTimeImmutable;
 use DateTimeZone;
 use EmptyIterator;
+use Interop\Http\Factory\ResponseFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prooph\Common\Messaging\MessageConverter;
 use Prooph\Common\Messaging\NoOpMessageConverter;
@@ -63,18 +64,19 @@ class LoadStreamTest extends TestCase
         ])->willReturn($uri->reveal())->shouldBeCalled();
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse()->willReturn($responsePrototype)->shouldBeCalled();
+
         $body = $this->prophesize(StreamInterface::class);
-        $body->rewind()->shouldBeCalled();
         $body->write(Argument::type('string'))->shouldBeCalled();
         $responsePrototype->getBody()->willReturn($body->reveal())->shouldBeCalled();
         $responsePrototype->withBody($body->reveal())->willReturn($responsePrototype->reveal())->shouldBeCalled();
-        $responsePrototype->withStatus(200)->willReturn($responsePrototype->reveal())->shouldBeCalled();
         $responsePrototype->withAddedHeader('Content-Type', 'application/vnd.eventstore.streamdesc+json; charset=utf-8')
             ->willReturn($responsePrototype->reveal())->shouldBeCalled();
 
         $transformer = $this->prophesize(Transformer::class);
 
-        $action = new LoadStream($eventStore->reveal(), $messageConverter->reveal(), $urlHelper->reveal(), $responsePrototype->reveal());
+        $action = new LoadStream($eventStore->reveal(), $messageConverter->reveal(), $urlHelper->reveal(), $responseFactory->reveal());
         $action->addTransformer($transformer->reveal(), 'application/vnd.eventstore.atom+json');
 
         $response = $action->handle($request->reveal());
@@ -100,11 +102,12 @@ class LoadStreamTest extends TestCase
         $urlHelper = $this->prophesize(UrlHelper::class);
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
-        $responsePrototype->withStatus(400)->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse(400)->willReturn($responsePrototype)->shouldBeCalled();
 
         $transformer = $this->prophesize(Transformer::class);
 
-        $action = new LoadStream($eventStore->reveal(), $messageConverter->reveal(), $urlHelper->reveal(), $responsePrototype->reveal());
+        $action = new LoadStream($eventStore->reveal(), $messageConverter->reveal(), $urlHelper->reveal(), $responseFactory->reveal());
         $action->addTransformer($transformer->reveal(), 'application/vnd.eventstore.atom+json');
 
         $response = $action->handle($request->reveal());
@@ -184,6 +187,7 @@ class LoadStreamTest extends TestCase
         ])->willReturn('/stream/foo/head/backward/3')->shouldBeCalled();
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
 
         $transformer = $this->prophesize(Transformer::class);
         $transformer->createResponse([
@@ -235,7 +239,7 @@ class LoadStreamTest extends TestCase
             ],
         ])->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new LoadStream($eventStore->reveal(), $messageConverter, $urlHelper->reveal(), $responsePrototype->reveal());
+        $action = new LoadStream($eventStore->reveal(), $messageConverter, $urlHelper->reveal(), $responseFactory->reveal());
         $action->addTransformer(
             $transformer->reveal(),
             'application/vnd.eventstore.atom+json',
@@ -369,11 +373,12 @@ class LoadStreamTest extends TestCase
         ];
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
 
         $transformer = $this->prophesize(Transformer::class);
         $transformer->createResponse($expected)->willReturn($responsePrototype->reveal())->shouldBeCalled();
 
-        $action = new LoadStream($eventStore->reveal(), $messageConverter, $urlHelper->reveal(), $responsePrototype->reveal());
+        $action = new LoadStream($eventStore->reveal(), $messageConverter, $urlHelper->reveal(), $responseFactory->reveal());
         $action->addTransformer(
             $transformer->reveal(),
             'application/vnd.eventstore.atom+json',
@@ -408,10 +413,12 @@ class LoadStreamTest extends TestCase
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
         $responsePrototype->withStatus(400, '\'1\' is not a valid event number')->willReturn($responsePrototype->reveal())->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse()->willReturn($responsePrototype)->shouldBeCalled();
 
         $transformer = $this->prophesize(Transformer::class);
 
-        $action = new LoadStream($eventStore->reveal(), $messageConverter->reveal(), $urlHelper->reveal(), $responsePrototype->reveal());
+        $action = new LoadStream($eventStore->reveal(), $messageConverter->reveal(), $urlHelper->reveal(), $responseFactory->reveal());
         $action->addTransformer(
             $transformer->reveal(),
             'application/vnd.eventstore.atom+json',
@@ -445,11 +452,12 @@ class LoadStreamTest extends TestCase
         $urlHelper = $this->prophesize(UrlHelper::class);
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
-        $responsePrototype->withStatus(404)->willReturn($responsePrototype->reveal())->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse(404)->willReturn($responsePrototype)->shouldBeCalled();
 
         $transformer = $this->prophesize(Transformer::class);
 
-        $action = new LoadStream($eventStore->reveal(), $messageConverter->reveal(), $urlHelper->reveal(), $responsePrototype->reveal());
+        $action = new LoadStream($eventStore->reveal(), $messageConverter->reveal(), $urlHelper->reveal(), $responseFactory->reveal());
         $action->addTransformer(
             $transformer->reveal(),
             'application/vnd.eventstore.atom+json',
@@ -570,11 +578,12 @@ class LoadStreamTest extends TestCase
         ];
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
 
         $transformer = $this->prophesize(Transformer::class);
         $transformer->createResponse($expected)->willReturn($responsePrototype->reveal())->shouldBeCalled();
 
-        $action = new LoadStream($eventStore->reveal(), $messageConverter, $urlHelper->reveal(), $responsePrototype->reveal());
+        $action = new LoadStream($eventStore->reveal(), $messageConverter, $urlHelper->reveal(), $responseFactory->reveal());
         $action->addTransformer(
             $transformer->reveal(),
             'application/vnd.eventstore.atom+json',
@@ -695,11 +704,12 @@ class LoadStreamTest extends TestCase
         ];
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
 
         $transformer = $this->prophesize(Transformer::class);
         $transformer->createResponse($expected)->willReturn($responsePrototype->reveal())->shouldBeCalled();
 
-        $action = new LoadStream($eventStore->reveal(), $messageConverter, $urlHelper->reveal(), $responsePrototype->reveal());
+        $action = new LoadStream($eventStore->reveal(), $messageConverter, $urlHelper->reveal(), $responseFactory->reveal());
         $action->addTransformer(
             $transformer->reveal(),
             'application/vnd.eventstore.atom+json',

@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Prooph\EventStore\Http\Middleware\Action;
 
+use Interop\Http\Factory\ResponseFactoryInterface;
 use Prooph\EventStore\Http\Middleware\Transformer;
 use Prooph\EventStore\Projection\ProjectionManager;
 use Psr\Http\Message\ResponseInterface;
@@ -34,14 +35,14 @@ final class FetchProjectionNames implements RequestHandlerInterface
     private $transformers = [];
 
     /**
-     * @var ResponseInterface
+     * @var ResponseFactoryInterface
      */
-    private $responsePrototype;
+    private $responseFactory;
 
-    public function __construct(ProjectionManager $projectionManager, ResponseInterface $responsePrototype)
+    public function __construct(ProjectionManager $projectionManager, ResponseFactoryInterface $responseFactory)
     {
         $this->projectionManager = $projectionManager;
-        $this->responsePrototype = $responsePrototype;
+        $this->responseFactory = $responseFactory;
     }
 
     public function addTransformer(Transformer $transformer, string ...$names)
@@ -54,7 +55,7 @@ final class FetchProjectionNames implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         if (! array_key_exists($request->getHeaderLine('Accept'), $this->transformers)) {
-            return $this->responsePrototype->withStatus(415);
+            return $this->responseFactory->createResponse(415);
         }
 
         $filter = $request->getAttribute('filter');

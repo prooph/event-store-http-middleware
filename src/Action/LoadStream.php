@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Prooph\EventStore\Http\Middleware\Action;
 
+use Interop\Http\Factory\ResponseFactoryInterface;
 use Prooph\Common\Messaging\MessageConverter;
 use Prooph\EventStore\Exception\StreamNotFound;
 use Prooph\EventStore\Http\Middleware\Model\MetadataMatcherBuilder;
@@ -46,20 +47,20 @@ final class LoadStream implements RequestHandlerInterface
     private $urlHelper;
 
     /**
-     * @var ResponseInterface
+     * @var ResponseFactoryInterface
      */
-    private $responsePrototype;
+    private $responseFactory;
 
     public function __construct(
         ReadOnlyEventStore $eventStore,
         MessageConverter $messageConverter,
         UrlHelper $urlHelper,
-        ResponseInterface $responsePrototype
+        ResponseFactoryInterface $responseFactory
     ) {
         $this->eventStore = $eventStore;
         $this->messageConverter = $messageConverter;
         $this->urlHelper = $urlHelper;
-        $this->responsePrototype = $responsePrototype;
+        $this->responseFactory = $responseFactory;
     }
 
     public function addTransformer(Transformer $transformer, string ...$names)
@@ -92,7 +93,7 @@ final class LoadStream implements RequestHandlerInterface
         $direction = $request->getAttribute('direction');
 
         if (PHP_INT_MAX === $start && 'forward' === $direction) {
-            return $this->responsePrototype->withStatus(400);
+            return $this->responseFactory->createResponse(400);
         }
 
         $metadataMatcherBuilder = new MetadataMatcherBuilder();
@@ -105,11 +106,11 @@ final class LoadStream implements RequestHandlerInterface
                 $streamEvents = $this->eventStore->load(new StreamName($streamName), $start, $count, $metadataMatcher);
             }
         } catch (StreamNotFound $e) {
-            return $this->responsePrototype->withStatus(404);
+            return $this->responseFactory->createResponse(404);
         }
 
         if (! $streamEvents->valid()) {
-            return $this->responsePrototype->withStatus(400, '\'' . $start . '\' is not a valid event number');
+            return $this->responseFactory->createResponse()->withStatus(400, '\'' . $start . '\' is not a valid event number');
         }
 
         $entries = [];
@@ -166,8 +167,9 @@ final class LoadStream implements RequestHandlerInterface
             'streamname' => urlencode($streamName),
         ]);
 
-        $body = $this->responsePrototype->getBody();
-        $body->rewind();
+        $response = $this->responseFactory->createResponse();
+
+        $body = $response->getBody();
         $body->write(json_encode([
             'title' => 'Description document for \'' . $streamName . '\'',
             'description' => 'The description document will be presented when no accept header is present or it was requested',
@@ -185,8 +187,7 @@ final class LoadStream implements RequestHandlerInterface
             ],
         ]));
 
-        return $this->responsePrototype->withStatus(200)
-            ->withAddedHeader('Content-Type', 'application/vnd.eventstore.streamdesc+json; charset=utf-8')
+        return $response->withAddedHeader('Content-Type', 'application/vnd.eventstore.streamdesc+json; charset=utf-8')
             ->withBody($body);
     }
 

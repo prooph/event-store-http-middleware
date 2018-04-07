@@ -12,13 +12,12 @@ declare(strict_types=1);
 
 namespace ProophTest\EventStore\Http\Middleware\Container\Action;
 
+use Interop\Http\Factory\ResponseFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prooph\EventStore\EventStore;
 use Prooph\EventStore\Http\Middleware\Action\DeleteStream;
 use Prooph\EventStore\Http\Middleware\Container\Action\DeleteStreamFactory;
-use Prooph\EventStore\Http\Middleware\ResponsePrototype;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 
 class DeleteStreamFactoryTest extends TestCase
 {
@@ -28,11 +27,11 @@ class DeleteStreamFactoryTest extends TestCase
     public function it_creates_new_delete_stream_action(): void
     {
         $eventStore = $this->prophesize(EventStore::class);
-        $responsePrototype = $this->prophesize(ResponseInterface::class);
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
 
         $container = $this->prophesize(ContainerInterface::class);
         $container->get(EventStore::class)->willReturn($eventStore->reveal())->shouldBeCalled();
-        $container->get(ResponsePrototype::class)->willReturn($responsePrototype->reveal())->shouldBeCalled();
+        $container->get(ResponseFactoryInterface::class)->willReturn($responseFactory->reveal())->shouldBeCalled();
 
         $factory = new DeleteStreamFactory();
         $action = $factory->__invoke($container->reveal());

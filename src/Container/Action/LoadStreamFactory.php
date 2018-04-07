@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace Prooph\EventStore\Http\Middleware\Container\Action;
 
+use Interop\Http\Factory\ResponseFactoryInterface;
 use Prooph\Common\Messaging\MessageConverter;
 use Prooph\EventStore\EventStore;
 use Prooph\EventStore\Http\Middleware\Action\LoadStream;
-use Prooph\EventStore\Http\Middleware\ResponsePrototype;
 use Prooph\EventStore\Http\Middleware\Transformer;
 use Prooph\EventStore\Http\Middleware\UrlHelper;
 use Psr\Container\ContainerInterface;
@@ -28,7 +28,7 @@ final class LoadStreamFactory
             $container->get(EventStore::class),
             $container->get(MessageConverter::class),
             $container->get(UrlHelper::class),
-            $container->get(ResponsePrototype::class)
+            $container->get(ResponseFactoryInterface::class)
         );
 
         $actionHandler->addTransformer(

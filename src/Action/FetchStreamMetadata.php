@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Prooph\EventStore\Http\Middleware\Action;
 
+use Interop\Http\Factory\ResponseFactoryInterface;
 use Prooph\EventStore\Exception\StreamNotFound;
 use Prooph\EventStore\Http\Middleware\Transformer;
 use Prooph\EventStore\ReadOnlyEventStore;
@@ -33,14 +34,14 @@ final class FetchStreamMetadata implements RequestHandlerInterface
     private $transformers = [];
 
     /**
-     * @var ResponseInterface
+     * @var ResponseFactoryInterface
      */
-    private $responsePrototype;
+    private $responseFactory;
 
-    public function __construct(ReadOnlyEventStore $eventStore, ResponseInterface $responsePrototype)
+    public function __construct(ReadOnlyEventStore $eventStore, ResponseFactoryInterface $responseFactory)
     {
         $this->eventStore = $eventStore;
-        $this->responsePrototype = $responsePrototype;
+        $this->responseFactory = $responseFactory;
     }
 
     public function addTransformer(Transformer $transformer, string ...$names)
@@ -53,7 +54,7 @@ final class FetchStreamMetadata implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         if (! array_key_exists($request->getHeaderLine('Accept'), $this->transformers)) {
-            return $this->responsePrototype->withStatus(415);
+            return $this->responseFactory->createResponse(415);
         }
 
         $streamName = urldecode($request->getAttribute('streamname'));
@@ -61,7 +62,7 @@ final class FetchStreamMetadata implements RequestHandlerInterface
         try {
             $metadata = $this->eventStore->fetchStreamMetadata(new StreamName($streamName));
         } catch (StreamNotFound $e) {
-            return $this->responsePrototype->withStatus(404);
+            return $this->responseFactory->createResponse(404);
         }
 
         $transformer = $this->transformers[$request->getHeaderLine('Accept')];

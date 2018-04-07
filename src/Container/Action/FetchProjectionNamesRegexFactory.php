@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Prooph\EventStore\Http\Middleware\Container\Action;
 
+use Interop\Http\Factory\ResponseFactoryInterface;
 use Prooph\EventStore\Http\Middleware\Action\FetchProjectionNamesRegex;
-use Prooph\EventStore\Http\Middleware\ResponsePrototype;
 use Prooph\EventStore\Http\Middleware\Transformer;
 use Prooph\EventStore\Projection\ProjectionManager;
 use Psr\Container\ContainerInterface;
@@ -22,7 +22,7 @@ final class FetchProjectionNamesRegexFactory
 {
     public function __invoke(ContainerInterface $container): FetchProjectionNamesRegex
     {
-        $actionHandler = new FetchProjectionNamesRegex($container->get(ProjectionManager::class), $container->get(ResponsePrototype::class));
+        $actionHandler = new FetchProjectionNamesRegex($container->get(ProjectionManager::class), $container->get(ResponseFactoryInterface::class));
 
         $actionHandler->addTransformer(
             $container->get(Transformer::class),

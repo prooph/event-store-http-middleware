@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Prooph\EventStore\Http\Middleware\Container\Action;
 
+use Interop\Http\Factory\ResponseFactoryInterface;
 use Prooph\EventStore\Http\Middleware\Action\StopProjection;
-use Prooph\EventStore\Http\Middleware\ResponsePrototype;
 use Prooph\EventStore\Projection\ProjectionManager;
 use Psr\Container\ContainerInterface;
 
@@ -21,6 +21,6 @@ final class StopProjectionFactory
 {
     public function __invoke(ContainerInterface $container): StopProjection
     {
-        return new StopProjection($container->get(ProjectionManager::class), $container->get(ResponsePrototype::class));
+        return new StopProjection($container->get(ProjectionManager::class), $container->get(ResponseFactoryInterface::class));
     }
 }

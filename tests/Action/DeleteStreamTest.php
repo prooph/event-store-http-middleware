@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace ProophTest\EventStore\Http\Middleware\Action;
 
+use Interop\Http\Factory\ResponseFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prooph\EventStore\EventStore;
 use Prooph\EventStore\Exception\StreamNotFound;
@@ -34,9 +35,10 @@ class DeleteStreamTest extends TestCase
         $request->getAttribute('streamname')->willReturn('unknown')->shouldBeCalled();
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
-        $responsePrototype->withStatus(404)->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse(404)->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new DeleteStream($eventStore->reveal(), $responsePrototype->reveal());
+        $action = new DeleteStream($eventStore->reveal(), $responseFactory->reveal());
 
         $response = $action->handle($request->reveal());
 
@@ -55,9 +57,10 @@ class DeleteStreamTest extends TestCase
         $request->getAttribute('streamname')->willReturn('foo\bar')->shouldBeCalled();
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
-        $responsePrototype->withStatus(204)->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse(204)->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new DeleteStream($eventStore->reveal(), $responsePrototype->reveal());
+        $action = new DeleteStream($eventStore->reveal(), $responseFactory->reveal());
 
         $response = $action->handle($request->reveal());
 

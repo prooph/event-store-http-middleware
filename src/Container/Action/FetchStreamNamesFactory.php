@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Prooph\EventStore\Http\Middleware\Container\Action;
 
+use Interop\Http\Factory\ResponseFactoryInterface;
 use Prooph\EventStore\EventStore;
 use Prooph\EventStore\Http\Middleware\Action\FetchStreamNames;
-use Prooph\EventStore\Http\Middleware\ResponsePrototype;
 use Prooph\EventStore\Http\Middleware\Transformer;
 use Psr\Container\ContainerInterface;
 
@@ -22,7 +22,7 @@ final class FetchStreamNamesFactory
 {
     public function __invoke(ContainerInterface $container): FetchStreamNames
     {
-        $actionHandler = new FetchStreamNames($container->get(EventStore::class), $container->get(ResponsePrototype::class));
+        $actionHandler = new FetchStreamNames($container->get(EventStore::class), $container->get(ResponseFactoryInterface::class));
 
         $actionHandler->addTransformer(
             $container->get(Transformer::class),

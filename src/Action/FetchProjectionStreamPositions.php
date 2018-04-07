@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Prooph\EventStore\Http\Middleware\Action;
 
+use Interop\Http\Factory\ResponseFactoryInterface;
 use Prooph\EventStore\Exception\ProjectionNotFound;
 use Prooph\EventStore\Http\Middleware\Transformer;
 use Prooph\EventStore\Projection\ProjectionManager;
@@ -32,14 +33,14 @@ final class FetchProjectionStreamPositions implements RequestHandlerInterface
     private $transformers = [];
 
     /**
-     * @var ResponseInterface
+     * @var ResponseFactoryInterface
      */
-    private $responsePrototype;
+    private $responseFactory;
 
-    public function __construct(ProjectionManager $projectionManager, ResponseInterface $responsePrototype)
+    public function __construct(ProjectionManager $projectionManager, ResponseFactoryInterface $responseFactory)
     {
         $this->projectionManager = $projectionManager;
-        $this->responsePrototype = $responsePrototype;
+        $this->responseFactory = $responseFactory;
     }
 
     public function addTransformer(Transformer $transformer, string ...$names)
@@ -52,7 +53,7 @@ final class FetchProjectionStreamPositions implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         if (! array_key_exists($request->getHeaderLine('Accept'), $this->transformers)) {
-            return $this->responsePrototype->withStatus(415);
+            return $this->responseFactory->createResponse(415);
         }
 
         $name = $request->getAttribute('name');
@@ -60,7 +61,7 @@ final class FetchProjectionStreamPositions implements RequestHandlerInterface
         try {
             $streamPositions = $this->projectionManager->fetchProjectionStreamPositions($name);
         } catch (ProjectionNotFound $e) {
-            return $this->responsePrototype->withStatus(404);
+            return $this->responseFactory->createResponse(404);
         }
 
         $transformer = $this->transformers[$request->getHeaderLine('Accept')];

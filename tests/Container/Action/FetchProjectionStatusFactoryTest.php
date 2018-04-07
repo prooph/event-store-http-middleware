@@ -12,13 +12,12 @@ declare(strict_types=1);
 
 namespace ProophTest\EventStore\Http\Middleware\Container\Action;
 
+use Interop\Http\Factory\ResponseFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prooph\EventStore\Http\Middleware\Action\FetchProjectionStatus;
 use Prooph\EventStore\Http\Middleware\Container\Action\FetchProjectionStatusFactory;
-use Prooph\EventStore\Http\Middleware\ResponsePrototype;
 use Prooph\EventStore\Projection\ProjectionManager;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 
 class FetchProjectionStatusFactoryTest extends TestCase
 {
@@ -28,11 +27,11 @@ class FetchProjectionStatusFactoryTest extends TestCase
     public function it_returns_action_handler(): void
     {
         $projectionManager = $this->prophesize(ProjectionManager::class);
-        $responsePrototype = $this->prophesize(ResponseInterface::class);
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
 
         $container = $this->prophesize(ContainerInterface::class);
         $container->get(ProjectionManager::class)->willReturn($projectionManager->reveal())->shouldBeCalled();
-        $container->get(ResponsePrototype::class)->willReturn($responsePrototype->reveal())->shouldBeCalled();
+        $container->get(ResponseFactoryInterface::class)->willReturn($responseFactory->reveal())->shouldBeCalled();
 
         $factory = new FetchProjectionStatusFactory();
 

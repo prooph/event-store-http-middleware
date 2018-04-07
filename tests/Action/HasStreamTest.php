@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace ProophTest\EventStore\Http\Middleware\Action;
 
+use Interop\Http\Factory\ResponseFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prooph\EventStore\EventStore;
 use Prooph\EventStore\Http\Middleware\Action\HasStream;
@@ -33,9 +34,10 @@ class HasStreamTest extends TestCase
         $request->getAttribute('streamname')->willReturn('unknown')->shouldBeCalled();
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
-        $responsePrototype->withStatus(404)->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse(404)->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new HasStream($eventStore->reveal(), $responsePrototype->reveal());
+        $action = new HasStream($eventStore->reveal(), $responseFactory->reveal());
 
         $response = $action->handle($request->reveal());
 
@@ -54,9 +56,10 @@ class HasStreamTest extends TestCase
         $request->getAttribute('streamname')->willReturn('known')->shouldBeCalled();
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
-        $responsePrototype->withStatus(200)->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse(200)->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new HasStream($eventStore->reveal(), $responsePrototype->reveal());
+        $action = new HasStream($eventStore->reveal(), $responseFactory->reveal());
 
         $response = $action->handle($request->reveal());
 

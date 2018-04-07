@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace ProophTest\EventStore\Http\Middleware\Action;
 
+use Interop\Http\Factory\ResponseFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prooph\EventStore\Exception\ProjectionNotFound;
 use Prooph\EventStore\Http\Middleware\Action\ResetProjection;
@@ -33,9 +34,10 @@ class ResetProjectionTest extends TestCase
         $request->getAttribute('name')->willReturn('runner')->shouldBeCalled();
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
-        $responsePrototype->withStatus(204)->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse(204)->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new ResetProjection($projectionManager->reveal(), $responsePrototype->reveal());
+        $action = new ResetProjection($projectionManager->reveal(), $responseFactory->reveal());
 
         $response = $action->handle($request->reveal());
 
@@ -54,9 +56,10 @@ class ResetProjectionTest extends TestCase
         $request->getAttribute('name')->willReturn('runner')->shouldBeCalled();
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
-        $responsePrototype->withStatus(404)->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse(404)->willReturn($responsePrototype)->shouldBeCalled();
 
-        $action = new ResetProjection($projectionManager->reveal(), $responsePrototype->reveal());
+        $action = new ResetProjection($projectionManager->reveal(), $responseFactory->reveal());
 
         $response = $action->handle($request->reveal());
 

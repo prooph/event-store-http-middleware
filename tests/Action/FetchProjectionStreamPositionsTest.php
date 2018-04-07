@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace ProophTest\EventStore\Http\Middleware\Action;
 
+use Interop\Http\Factory\ResponseFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prooph\EventStore\Exception\ProjectionNotFound;
 use Prooph\EventStore\Http\Middleware\Action\FetchProjectionStreamPositions;
@@ -33,11 +34,12 @@ class FetchProjectionStreamPositionsTest extends TestCase
         $request->getHeaderLine('Accept')->willReturn('')->shouldBeCalled();
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
-        $responsePrototype->withStatus(415)->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse(415)->willReturn($responsePrototype)->shouldBeCalled();
 
         $transformer = $this->prophesize(Transformer::class);
 
-        $action = new FetchProjectionStreamPositions($projectionManager->reveal(), $responsePrototype->reveal());
+        $action = new FetchProjectionStreamPositions($projectionManager->reveal(), $responseFactory->reveal());
         $action->addTransformer($transformer->reveal(), 'application/atom+json');
 
         $response = $action->handle($request->reveal());
@@ -58,11 +60,12 @@ class FetchProjectionStreamPositionsTest extends TestCase
         $request->getAttribute('name')->willReturn('foo')->shouldBeCalled();
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
 
         $transformer = $this->prophesize(Transformer::class);
         $transformer->createResponse(['foo' => 100, 'bar' => 200])->willReturn($responsePrototype->reveal())->shouldBeCalled();
 
-        $action = new FetchProjectionStreamPositions($projectionManager->reveal(), $responsePrototype->reveal());
+        $action = new FetchProjectionStreamPositions($projectionManager->reveal(), $responseFactory->reveal());
         $action->addTransformer($transformer->reveal(), 'application/atom+json');
 
         $response = $action->handle($request->reveal());
@@ -83,11 +86,12 @@ class FetchProjectionStreamPositionsTest extends TestCase
         $request->getAttribute('name')->willReturn('unknown')->shouldBeCalled();
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
-        $responsePrototype->withStatus(404)->willReturn($responsePrototype)->shouldBeCalled();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+        $responseFactory->createResponse(404)->willReturn($responsePrototype)->shouldBeCalled();
 
         $transformer = $this->prophesize(Transformer::class);
 
-        $action = new FetchProjectionStreamPositions($projectionManager->reveal(), $responsePrototype->reveal());
+        $action = new FetchProjectionStreamPositions($projectionManager->reveal(), $responseFactory->reveal());
         $action->addTransformer($transformer->reveal(), 'application/atom+json');
 
         $response = $action->handle($request->reveal());

@@ -12,14 +12,13 @@ declare(strict_types=1);
 
 namespace ProophTest\EventStore\Http\Middleware\Container\Action;
 
+use Interop\Http\Factory\ResponseFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prooph\EventStore\Http\Middleware\Action\FetchProjectionNamesRegex;
 use Prooph\EventStore\Http\Middleware\Container\Action\FetchProjectionNamesRegexFactory;
-use Prooph\EventStore\Http\Middleware\ResponsePrototype;
 use Prooph\EventStore\Http\Middleware\Transformer;
 use Prooph\EventStore\Projection\ProjectionManager;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 
 class FetchProjectionNamesRegexFactoryTest extends TestCase
 {
@@ -29,12 +28,12 @@ class FetchProjectionNamesRegexFactoryTest extends TestCase
     public function it_returns_action_handler(): void
     {
         $projectionManager = $this->prophesize(ProjectionManager::class);
-        $responsePrototype = $this->prophesize(ResponseInterface::class);
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
         $transformer = $this->prophesize(Transformer::class);
 
         $container = $this->prophesize(ContainerInterface::class);
         $container->get(ProjectionManager::class)->willReturn($projectionManager->reveal())->shouldBeCalled();
-        $container->get(ResponsePrototype::class)->willReturn($responsePrototype->reveal())->shouldBeCalled();
+        $container->get(ResponseFactoryInterface::class)->willReturn($responseFactory->reveal())->shouldBeCalled();
         $container->get(Transformer::class)->willReturn($transformer->reveal())->shouldBeCalled();
 
         $factory = new FetchProjectionNamesRegexFactory();

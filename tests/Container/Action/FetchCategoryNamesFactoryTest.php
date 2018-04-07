@@ -12,14 +12,13 @@ declare(strict_types=1);
 
 namespace ProophTest\EventStore\Http\Middleware\Container\Action;
 
+use Interop\Http\Factory\ResponseFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prooph\EventStore\EventStore;
 use Prooph\EventStore\Http\Middleware\Action\FetchCategoryNames;
 use Prooph\EventStore\Http\Middleware\Container\Action\FetchCategoryNamesFactory;
-use Prooph\EventStore\Http\Middleware\ResponsePrototype;
 use Prooph\EventStore\Http\Middleware\Transformer;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 
 class FetchCategoryNamesFactoryTest extends TestCase
 {
@@ -29,12 +28,12 @@ class FetchCategoryNamesFactoryTest extends TestCase
     public function it_returns_action_handler(): void
     {
         $eventStore = $this->prophesize(EventStore::class);
-        $responsePrototype = $this->prophesize(ResponseInterface::class);
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
         $transformer = $this->prophesize(Transformer::class);
 
         $container = $this->prophesize(ContainerInterface::class);
         $container->get(EventStore::class)->willReturn($eventStore->reveal())->shouldBeCalled();
-        $container->get(ResponsePrototype::class)->willReturn($responsePrototype->reveal())->shouldBeCalled();
+        $container->get(ResponseFactoryInterface::class)->willReturn($responseFactory->reveal())->shouldBeCalled();
         $container->get(Transformer::class)->willReturn($transformer->reveal())->shouldBeCalled();
 
         $factory = new FetchCategoryNamesFactory();
