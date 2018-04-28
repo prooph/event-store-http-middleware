@@ -16,7 +16,7 @@ use Interop\Http\Factory\ResponseFactoryInterface;
 use Prooph\Common\Messaging\MessageConverter;
 use Prooph\EventStore\EventStore;
 use Prooph\EventStore\Http\Middleware\Action\LoadStream;
-use Prooph\EventStore\Http\Middleware\Transformer;
+use Prooph\EventStore\Http\Middleware\JsonTransformer;
 use Prooph\EventStore\Http\Middleware\UrlHelper;
 use Psr\Container\ContainerInterface;
 
@@ -32,7 +32,7 @@ final class LoadStreamFactory
         );
 
         $actionHandler->addTransformer(
-            $container->get(Transformer::class),
+            $container->get(JsonTransformer::class),
             'application/vnd.eventstore.atom+json',
             'application/atom+json',
             'application/json'

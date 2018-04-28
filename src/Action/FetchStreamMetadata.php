@@ -67,6 +67,6 @@ final class FetchStreamMetadata implements RequestHandlerInterface
 
         $transformer = $this->transformers[$request->getHeaderLine('Accept')];
 
-        return $transformer->createResponse($metadata);
+        return $transformer->createResponse($this->responseFactory, $metadata);
     }
 }

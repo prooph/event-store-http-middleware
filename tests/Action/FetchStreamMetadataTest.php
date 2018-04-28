@@ -92,7 +92,7 @@ class FetchStreamMetadataTest extends TestCase
         $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
 
         $transformer = $this->prophesize(Transformer::class);
-        $transformer->createResponse(['foo' => 'bar'])->willReturn($responsePrototype->reveal())->shouldBeCalled();
+        $transformer->createResponse($responseFactory->reveal(), ['foo' => 'bar'])->willReturn($responsePrototype->reveal())->shouldBeCalled();
 
         $action = new FetchStreamMetadata($eventStore->reveal(), $responseFactory->reveal());
         $action->addTransformer($transformer->reveal(), 'application/vnd.eventstore.atom+json');

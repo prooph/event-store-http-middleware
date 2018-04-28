@@ -61,7 +61,7 @@ class FetchProjectionNamesTest extends TestCase
         $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
 
         $transformer = $this->prophesize(Transformer::class);
-        $transformer->createResponse(['foo', 'foobar'])->willReturn($responsePrototype->reveal())->shouldBeCalled();
+        $transformer->createResponse($responseFactory->reveal(), ['foo', 'foobar'])->willReturn($responsePrototype->reveal())->shouldBeCalled();
 
         $action = new FetchProjectionNames($projectionManager->reveal(), $responseFactory->reveal());
         $action->addTransformer($transformer->reveal(), 'application/atom+json');
@@ -88,7 +88,7 @@ class FetchProjectionNamesTest extends TestCase
         $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
 
         $transformer = $this->prophesize(Transformer::class);
-        $transformer->createResponse(['foo', 'foobar'])->willReturn($responsePrototype->reveal())->shouldBeCalled();
+        $transformer->createResponse($responseFactory->reveal(), ['foo', 'foobar'])->willReturn($responsePrototype->reveal())->shouldBeCalled();
 
         $action = new FetchProjectionNames($projectionManager->reveal(), $responseFactory->reveal());
         $action->addTransformer($transformer->reveal(), 'application/atom+json');

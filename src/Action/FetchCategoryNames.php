@@ -73,6 +73,6 @@ final class FetchCategoryNames implements RequestHandlerInterface
 
         $transformer = $this->transformers[$request->getHeaderLine('Accept')];
 
-        return $transformer->createResponse($categoryNames);
+        return $transformer->createResponse($this->responseFactory, $categoryNames);
     }
 }

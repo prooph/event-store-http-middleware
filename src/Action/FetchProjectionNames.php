@@ -73,6 +73,6 @@ final class FetchProjectionNames implements RequestHandlerInterface
 
         $transformer = $this->transformers[$request->getHeaderLine('Accept')];
 
-        return $transformer->createResponse($projectionNames);
+        return $transformer->createResponse($this->responseFactory, $projectionNames);
     }
 }

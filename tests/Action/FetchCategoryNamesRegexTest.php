@@ -64,7 +64,7 @@ class FetchCategoryNamesRegexTest extends TestCase
         $transformer = $this->prophesize(Transformer::class);
         $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
 
-        $transformer->createResponse(['foo'])->willReturn($responsePrototype->reveal())->shouldBeCalled();
+        $transformer->createResponse($responseFactory->reveal(), ['foo'])->willReturn($responsePrototype->reveal())->shouldBeCalled();
 
         $action = new FetchCategoryNamesRegex($eventStore->reveal(), $responseFactory->reveal());
         $action->addTransformer($transformer->reveal(), 'application/atom+json');

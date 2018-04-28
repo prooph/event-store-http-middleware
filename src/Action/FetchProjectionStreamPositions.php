@@ -66,6 +66,6 @@ final class FetchProjectionStreamPositions implements RequestHandlerInterface
 
         $transformer = $this->transformers[$request->getHeaderLine('Accept')];
 
-        return $transformer->createResponse($streamPositions);
+        return $transformer->createResponse($this->responseFactory, $streamPositions);
     }
 }

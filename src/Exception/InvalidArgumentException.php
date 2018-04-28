@@ -10,16 +10,8 @@
 
 declare(strict_types=1);
 
-namespace Prooph\EventStore\Http\Middleware;
+namespace Prooph\EventStore\Http\Middleware\Exception;
 
-use Interop\Http\Factory\ResponseFactoryInterface;
-use Psr\Http\Message\ResponseInterface;
-
-interface Transformer
+class InvalidArgumentException extends \InvalidArgumentException
 {
-    /**
-     * @param array $result
-     * @return ResponseInterface
-     */
-    public function createResponse(ResponseFactoryInterface $factory, array $result): ResponseInterface;
 }

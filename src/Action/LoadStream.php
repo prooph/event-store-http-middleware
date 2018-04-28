@@ -158,7 +158,7 @@ final class LoadStream implements RequestHandlerInterface
             'entries' => $entries,
         ];
 
-        return $transformer->createResponse($result);
+        return $transformer->createResponse($this->responseFactory, $result);
     }
 
     private function returnDescription(ServerRequestInterface $request, string $streamName): ResponseInterface

@@ -66,6 +66,6 @@ final class FetchProjectionState implements RequestHandlerInterface
 
         $transformer = $this->transformers[$request->getHeaderLine('Accept')];
 
-        return $transformer->createResponse($state);
+        return $transformer->createResponse($this->responseFactory, $state);
     }
 }
