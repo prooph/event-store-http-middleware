@@ -55,7 +55,6 @@ class JsonTransformerTest extends TestCase
 
     /**
      * @test
-     * @expectedException InvalidArgumentException
      */
     public function it_throws_invalid_argument_exception_if_result_cannot_be_json_encoded()
     {
@@ -63,6 +62,8 @@ class JsonTransformerTest extends TestCase
         $wrongEncodedResult = ['foo' => mb_convert_encoding('üäö', 'ISO-8859-1')];
 
         $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+
+        $this->expectException(InvalidArgumentException::class);
 
         $this->transformer->createResponse($responseFactory->reveal(), $wrongEncodedResult);
     }

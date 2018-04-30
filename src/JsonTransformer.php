@@ -27,7 +27,7 @@ final class JsonTransformer implements Transformer
      *
      * @const int
      */
-    const DEFAULT_JSON_FLAGS = 79;
+    private const DEFAULT_JSON_FLAGS = 79;
 
     /**
      * @param array $result
