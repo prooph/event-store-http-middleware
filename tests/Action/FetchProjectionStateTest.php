@@ -61,7 +61,7 @@ class FetchProjectionStateTest extends TestCase
         $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
 
         $transformer = $this->prophesize(Transformer::class);
-        $transformer->createResponse(['foo' => 'bar'])->willReturn($responsePrototype->reveal())->shouldBeCalled();
+        $transformer->createResponse($responseFactory->reveal(), ['foo' => 'bar'])->willReturn($responsePrototype->reveal())->shouldBeCalled();
 
         $action = new FetchProjectionState($projectionManager->reveal(), $responseFactory->reveal());
         $action->addTransformer($transformer->reveal(), 'application/atom+json');

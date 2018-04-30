@@ -85,6 +85,6 @@ final class FetchStreamNames implements RequestHandlerInterface
 
         $transformer = $this->transformers[$request->getHeaderLine('Accept')];
 
-        return $transformer->createResponse($streamNames);
+        return $transformer->createResponse($this->responseFactory, $streamNames);
     }
 }

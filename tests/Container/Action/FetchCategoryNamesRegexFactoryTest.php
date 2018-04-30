@@ -17,6 +17,7 @@ use PHPUnit\Framework\TestCase;
 use Prooph\EventStore\EventStore;
 use Prooph\EventStore\Http\Middleware\Action\FetchCategoryNamesRegex;
 use Prooph\EventStore\Http\Middleware\Container\Action\FetchCategoryNamesRegexFactory;
+use Prooph\EventStore\Http\Middleware\JsonTransformer;
 use Prooph\EventStore\Http\Middleware\Transformer;
 use Psr\Container\ContainerInterface;
 
@@ -34,7 +35,7 @@ class FetchCategoryNamesRegexFactoryTest extends TestCase
         $container = $this->prophesize(ContainerInterface::class);
         $container->get(EventStore::class)->willReturn($eventStore->reveal())->shouldBeCalled();
         $container->get(ResponseFactoryInterface::class)->willReturn($responseFactory->reveal())->shouldBeCalled();
-        $container->get(Transformer::class)->willReturn($transformer->reveal())->shouldBeCalled();
+        $container->get(JsonTransformer::class)->willReturn($transformer->reveal())->shouldBeCalled();
 
         $factory = new FetchCategoryNamesRegexFactory();
 

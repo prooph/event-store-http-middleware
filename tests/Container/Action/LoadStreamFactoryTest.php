@@ -18,6 +18,7 @@ use Prooph\Common\Messaging\MessageConverter;
 use Prooph\EventStore\EventStore;
 use Prooph\EventStore\Http\Middleware\Action\LoadStream;
 use Prooph\EventStore\Http\Middleware\Container\Action\LoadStreamFactory;
+use Prooph\EventStore\Http\Middleware\JsonTransformer;
 use Prooph\EventStore\Http\Middleware\Transformer;
 use Prooph\EventStore\Http\Middleware\UrlHelper;
 use Psr\Container\ContainerInterface;
@@ -40,7 +41,7 @@ class LoadStreamFactoryTest extends TestCase
         $container->get(MessageConverter::class)->willReturn($messageConverter->reveal())->shouldBeCalled();
         $container->get(UrlHelper::class)->willReturn($urlHelper->reveal())->shouldBeCalled();
         $container->get(ResponseFactoryInterface::class)->willReturn($responseFactory->reveal())->shouldBeCalled();
-        $container->get(Transformer::class)->willReturn($transformer->reveal())->shouldBeCalled();
+        $container->get(JsonTransformer::class)->willReturn($transformer->reveal())->shouldBeCalled();
 
         $factory = new LoadStreamFactory();
         $stream = $factory->__invoke($container->reveal());

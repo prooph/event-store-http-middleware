@@ -15,7 +15,7 @@ namespace Prooph\EventStore\Http\Middleware\Container\Action;
 use Interop\Http\Factory\ResponseFactoryInterface;
 use Prooph\EventStore\EventStore;
 use Prooph\EventStore\Http\Middleware\Action\FetchStreamNamesRegex;
-use Prooph\EventStore\Http\Middleware\Transformer;
+use Prooph\EventStore\Http\Middleware\JsonTransformer;
 use Psr\Container\ContainerInterface;
 
 final class FetchStreamNamesRegexFactory
@@ -25,7 +25,7 @@ final class FetchStreamNamesRegexFactory
         $actionHandler = new FetchStreamNamesRegex($container->get(EventStore::class), $container->get(ResponseFactoryInterface::class));
 
         $actionHandler->addTransformer(
-            $container->get(Transformer::class),
+            $container->get(JsonTransformer::class),
             'application/atom+json',
             'application/json'
         );

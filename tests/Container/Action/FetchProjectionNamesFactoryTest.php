@@ -16,6 +16,7 @@ use Interop\Http\Factory\ResponseFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prooph\EventStore\Http\Middleware\Action\FetchProjectionNames;
 use Prooph\EventStore\Http\Middleware\Container\Action\FetchProjectionNamesFactory;
+use Prooph\EventStore\Http\Middleware\JsonTransformer;
 use Prooph\EventStore\Http\Middleware\Transformer;
 use Prooph\EventStore\Projection\ProjectionManager;
 use Psr\Container\ContainerInterface;
@@ -34,7 +35,7 @@ class FetchProjectionNamesFactoryTest extends TestCase
         $container = $this->prophesize(ContainerInterface::class);
         $container->get(ProjectionManager::class)->willReturn($projectionManager->reveal())->shouldBeCalled();
         $container->get(ResponseFactoryInterface::class)->willReturn($responseFactory->reveal())->shouldBeCalled();
-        $container->get(Transformer::class)->willReturn($transformer->reveal())->shouldBeCalled();
+        $container->get(JsonTransformer::class)->willReturn($transformer->reveal())->shouldBeCalled();
 
         $factory = new FetchProjectionNamesFactory();
 

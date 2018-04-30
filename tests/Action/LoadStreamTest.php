@@ -190,7 +190,7 @@ class LoadStreamTest extends TestCase
         $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
 
         $transformer = $this->prophesize(Transformer::class);
-        $transformer->createResponse([
+        $transformer->createResponse($responseFactory->reveal(), [
             'title' => 'Event stream \'foo\'',
             'id' => 'http://localhost:8080/stream/foo',
             'streamName' => 'foo',
@@ -376,7 +376,7 @@ class LoadStreamTest extends TestCase
         $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
 
         $transformer = $this->prophesize(Transformer::class);
-        $transformer->createResponse($expected)->willReturn($responsePrototype->reveal())->shouldBeCalled();
+        $transformer->createResponse($responseFactory->reveal(), $expected)->willReturn($responsePrototype->reveal())->shouldBeCalled();
 
         $action = new LoadStream($eventStore->reveal(), $messageConverter, $urlHelper->reveal(), $responseFactory->reveal());
         $action->addTransformer(
@@ -581,7 +581,7 @@ class LoadStreamTest extends TestCase
         $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
 
         $transformer = $this->prophesize(Transformer::class);
-        $transformer->createResponse($expected)->willReturn($responsePrototype->reveal())->shouldBeCalled();
+        $transformer->createResponse($responseFactory->reveal(), $expected)->willReturn($responsePrototype->reveal())->shouldBeCalled();
 
         $action = new LoadStream($eventStore->reveal(), $messageConverter, $urlHelper->reveal(), $responseFactory->reveal());
         $action->addTransformer(
@@ -707,7 +707,7 @@ class LoadStreamTest extends TestCase
         $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
 
         $transformer = $this->prophesize(Transformer::class);
-        $transformer->createResponse($expected)->willReturn($responsePrototype->reveal())->shouldBeCalled();
+        $transformer->createResponse($responseFactory->reveal(), $expected)->willReturn($responsePrototype->reveal())->shouldBeCalled();
 
         $action = new LoadStream($eventStore->reveal(), $messageConverter, $urlHelper->reveal(), $responseFactory->reveal());
         $action->addTransformer(

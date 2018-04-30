@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace ProophTest\EventStore\Http\Middleware\Action;
 
+use Interop\Http\Factory\ResponseFactoryInterface;
 use Prooph\EventStore\Http\Middleware\Transformer;
 use Psr\Http\Message\ResponseInterface;
 
@@ -31,10 +32,11 @@ final class TransformerStub implements Transformer
     }
 
     /**
+     * @param ResponseFactoryInterface $factory
      * @param array $result
      * @return ResponseInterface
      */
-    public function createResponse(array $result): ResponseInterface
+    public function createResponse(ResponseFactoryInterface $factory, array $result): ResponseInterface
     {
         return $this->result;
     }

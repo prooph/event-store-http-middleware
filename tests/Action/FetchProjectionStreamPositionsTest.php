@@ -63,7 +63,7 @@ class FetchProjectionStreamPositionsTest extends TestCase
         $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
 
         $transformer = $this->prophesize(Transformer::class);
-        $transformer->createResponse(['foo' => 100, 'bar' => 200])->willReturn($responsePrototype->reveal())->shouldBeCalled();
+        $transformer->createResponse($responseFactory->reveal(), ['foo' => 100, 'bar' => 200])->willReturn($responsePrototype->reveal())->shouldBeCalled();
 
         $action = new FetchProjectionStreamPositions($projectionManager->reveal(), $responseFactory->reveal());
         $action->addTransformer($transformer->reveal(), 'application/atom+json');
