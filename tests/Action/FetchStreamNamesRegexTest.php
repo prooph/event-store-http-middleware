@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the prooph/event-store-http-middleware.
  * (c) 2018-2018 prooph software GmbH <contact@prooph.de>
@@ -63,7 +64,7 @@ class FetchStreamNamesRegexTest extends TestCase
 
         $request = $this->prophesize(ServerRequestInterface::class);
         $request->getHeaderLine('Accept')->willReturn('application/atom+json')->shouldBeCalled();
-        $request->getAttribute('filter')->willReturn(urlencode('^foo$'))->shouldBeCalled();
+        $request->getAttribute('filter')->willReturn(\urlencode('^foo$'))->shouldBeCalled();
         $request->getQueryParams()->willReturn([])->shouldBeCalled();
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);

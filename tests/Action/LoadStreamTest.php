@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the prooph/event-store-http-middleware.
  * (c) 2018-2018 prooph software GmbH <contact@prooph.de>
@@ -60,7 +61,7 @@ class LoadStreamTest extends TestCase
 
         $urlHelper = $this->prophesize(UrlHelper::class);
         $urlHelper->generate('EventStore::load', [
-            'streamname' => urlencode('foo\bar'),
+            'streamname' => \urlencode('foo\bar'),
         ])->willReturn($uri->reveal())->shouldBeCalled();
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);

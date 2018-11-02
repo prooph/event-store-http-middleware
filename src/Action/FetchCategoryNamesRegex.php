@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the prooph/event-store-http-middleware.
  * (c) 2018-2018 prooph software GmbH <contact@prooph.de>
@@ -54,11 +55,11 @@ final class FetchCategoryNamesRegex implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        if (! array_key_exists($request->getHeaderLine('Accept'), $this->transformers)) {
+        if (! \array_key_exists($request->getHeaderLine('Accept'), $this->transformers)) {
             return $this->responseFactory->createResponse(415);
         }
 
-        $filter = urldecode($request->getAttribute('filter'));
+        $filter = \urldecode($request->getAttribute('filter'));
 
         $queryParams = $request->getQueryParams();
 

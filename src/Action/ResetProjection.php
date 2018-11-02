@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the prooph/event-store-http-middleware.
  * (c) 2018-2018 prooph software GmbH <contact@prooph.de>
@@ -39,7 +40,7 @@ final class ResetProjection implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $projectionName = urldecode($request->getAttribute('name'));
+        $projectionName = \urldecode($request->getAttribute('name'));
 
         try {
             $this->projectionManager->resetProjection($projectionName);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the prooph/event-store-http-middleware.
  * (c) 2018-2018 prooph software GmbH <contact@prooph.de>
@@ -30,21 +31,21 @@ class MetadataMatcherBuilder
         foreach ($request->getQueryParams() as $queryParam => $value) {
             $matches = [];
 
-            if (preg_match('/^meta_(\d+)_field$/', $queryParam, $matches)) {
+            if (\preg_match('/^meta_(\d+)_field$/', $queryParam, $matches)) {
                 $metadata[$matches[1]]['field'] = $value;
-            } elseif (preg_match('/^meta_(\d+)_operator$/', $queryParam, $matches)
-                && defined(Operator::class . '::' . $value)
+            } elseif (\preg_match('/^meta_(\d+)_operator$/', $queryParam, $matches)
+                && \defined(Operator::class . '::' . $value)
             ) {
                 $metadata[$matches[1]]['operator'] = Operator::byName($value);
-            } elseif (preg_match('/^meta_(\d+)_value$/', $queryParam, $matches)) {
+            } elseif (\preg_match('/^meta_(\d+)_value$/', $queryParam, $matches)) {
                 $metadata[$matches[1]]['value'] = $value;
-            } elseif ($includeProperties && preg_match('/^property_(\d+)_field$/', $queryParam, $matches)) {
+            } elseif ($includeProperties && \preg_match('/^property_(\d+)_field$/', $queryParam, $matches)) {
                 $messageProperty[$matches[1]]['field'] = $value;
-            } elseif ($includeProperties && preg_match('/^property_(\d+)_operator$/', $queryParam, $matches)
-                && defined(Operator::class . '::' . $value)
+            } elseif ($includeProperties && \preg_match('/^property_(\d+)_operator$/', $queryParam, $matches)
+                && \defined(Operator::class . '::' . $value)
             ) {
                 $messageProperty[$matches[1]]['operator'] = Operator::byName($value);
-            } elseif ($includeProperties && preg_match('/^property_(\d+)_value$/', $queryParam, $matches)) {
+            } elseif ($includeProperties && \preg_match('/^property_(\d+)_value$/', $queryParam, $matches)) {
                 $messageProperty[$matches[1]]['value'] = $value;
             }
         }

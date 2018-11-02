@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the prooph/event-store-http-middleware.
  * (c) 2018-2018 prooph software GmbH <contact@prooph.de>
@@ -72,9 +73,9 @@ final class LoadStream implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $streamName = urldecode($request->getAttribute('streamname'));
+        $streamName = \urldecode($request->getAttribute('streamname'));
 
-        if (! array_key_exists($request->getHeaderLine('Accept'), $this->transformers)) {
+        if (! \array_key_exists($request->getHeaderLine('Accept'), $this->transformers)) {
             return $this->returnDescription($request, $streamName);
         }
 
@@ -124,7 +125,7 @@ final class LoadStream implements RequestHandlerInterface
         $host = $this->host($request);
 
         $id = $host . $this->urlHelper->generate('EventStore::load', [
-                'streamname' => urlencode($streamName),
+                'streamname' => \urlencode($streamName),
             ]);
 
         $result = [
@@ -138,7 +139,7 @@ final class LoadStream implements RequestHandlerInterface
                 ],
                 [
                     'uri' => $host . $this->urlHelper->generate('EventStore::load', [
-                            'streamname' => urlencode($streamName),
+                            'streamname' => \urlencode($streamName),
                             'start' => '1',
                             'direction' => 'forward',
                             'count' => $count,
@@ -147,7 +148,7 @@ final class LoadStream implements RequestHandlerInterface
                 ],
                 [
                     'uri' => $host . $this->urlHelper->generate('EventStore::load', [
-                            'streamname' => urlencode($streamName),
+                            'streamname' => \urlencode($streamName),
                             'start' => 'head',
                             'direction' => 'backward',
                             'count' => $count,
@@ -164,13 +165,13 @@ final class LoadStream implements RequestHandlerInterface
     private function returnDescription(ServerRequestInterface $request, string $streamName): ResponseInterface
     {
         $id = $this->host($request) . $this->urlHelper->generate('EventStore::load', [
-            'streamname' => urlencode($streamName),
+            'streamname' => \urlencode($streamName),
         ]);
 
         $response = $this->responseFactory->createResponse();
 
         $body = $response->getBody();
-        $body->write(json_encode([
+        $body->write(\json_encode([
             'title' => 'Description document for \'' . $streamName . '\'',
             'description' => 'The description document will be presented when no accept header is present or it was requested',
             '_links' => [
@@ -182,7 +183,7 @@ final class LoadStream implements RequestHandlerInterface
                 ],
                 'stream' => [
                     'href' => $id,
-                    'supportedContentTypes' => array_keys($this->transformers),
+                    'supportedContentTypes' => \array_keys($this->transformers),
                 ],
             ],
         ]));
