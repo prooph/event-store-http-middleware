@@ -1,6 +1,7 @@
 <?php
+
 /**
- * This file is part of the prooph/event-store-http-middleware.
+ * This file is part of prooph/event-store-http-middleware.
  * (c) 2018-2018 prooph software GmbH <contact@prooph.de>
  * (c) 2018-2018 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
@@ -56,15 +57,15 @@ final class JsonTransformer implements Transformer
     private function jsonEncode(array $data, $encodingOptions): string
     {
         // Clear json_last_error()
-        json_encode(null);
+        \json_encode(null);
 
-        $json = json_encode($data, $encodingOptions);
+        $json = \json_encode($data, $encodingOptions);
 
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new InvalidArgumentException(sprintf(
+        if (JSON_ERROR_NONE !== \json_last_error()) {
+            throw new InvalidArgumentException(\sprintf(
                 'Unable to encode data to JSON in %s: %s',
                 __CLASS__,
-                json_last_error_msg()
+                \json_last_error_msg()
             ));
         }
 

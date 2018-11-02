@@ -1,6 +1,7 @@
 <?php
+
 /**
- * This file is part of the prooph/event-store-http-middleware.
+ * This file is part of prooph/event-store-http-middleware.
  * (c) 2018-2018 prooph software GmbH <contact@prooph.de>
  * (c) 2018-2018 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
@@ -39,7 +40,7 @@ final class HasStream implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $streamName = urldecode($request->getAttribute('streamname'));
+        $streamName = \urldecode($request->getAttribute('streamname'));
 
         if ($this->eventStore->hasStream(new StreamName($streamName))) {
             return $this->responseFactory->createResponse(200);

@@ -1,6 +1,7 @@
 <?php
+
 /**
- * This file is part of the prooph/event-store-http-middleware.
+ * This file is part of prooph/event-store-http-middleware.
  * (c) 2018-2018 prooph software GmbH <contact@prooph.de>
  * (c) 2018-2018 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
@@ -60,20 +61,20 @@ final class PostStream implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        if (! in_array($request->getHeaderLine('Content-Type'), $this->validRequestContentTypes)) {
+        if (! \in_array($request->getHeaderLine('Content-Type'), $this->validRequestContentTypes)) {
             return $this->responseFactory->createResponse(415);
         }
 
         $readEvents = $request->getParsedBody();
 
-        if (! is_array($readEvents) || empty($readEvents)) {
+        if (! \is_array($readEvents) || empty($readEvents)) {
             return $this->responseFactory->createResponse()->withStatus(400, 'Write request body invalid');
         }
 
         $events = [];
 
         foreach ($readEvents as $event) {
-            if (! is_array($event)) {
+            if (! \is_array($event)) {
                 return $this->responseFactory->createResponse()->withStatus(400, 'Write request body invalid');
             }
 
@@ -81,7 +82,7 @@ final class PostStream implements RequestHandlerInterface
                 $event['uuid'] = Uuid::uuid4()->toString();
             }
 
-            if (! is_string($event['uuid']) || ! Uuid::isValid($event['uuid'])) {
+            if (! \is_string($event['uuid']) || ! Uuid::isValid($event['uuid'])) {
                 return $this->responseFactory->createResponse()->withStatus(400, 'Invalid event uuid provided');
             }
 
@@ -89,7 +90,7 @@ final class PostStream implements RequestHandlerInterface
                 return $this->responseFactory->createResponse()->withStatus(400, 'Empty event name provided');
             }
 
-            if (! is_string($event['message_name']) || strlen($event['message_name']) === 0) {
+            if (! \is_string($event['message_name']) || \strlen($event['message_name']) === 0) {
                 return $this->responseFactory->createResponse()->withStatus(400, 'Invalid event name provided');
             }
 
@@ -134,7 +135,7 @@ final class PostStream implements RequestHandlerInterface
             }
         }
 
-        $streamName = new StreamName(urldecode($request->getAttribute('streamname')));
+        $streamName = new StreamName(\urldecode($request->getAttribute('streamname')));
 
         if ($this->eventStore instanceof TransactionalEventStore) {
             $this->eventStore->beginTransaction();

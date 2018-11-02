@@ -1,6 +1,7 @@
 <?php
+
 /**
- * This file is part of the prooph/event-store-http-middleware.
+ * This file is part of prooph/event-store-http-middleware.
  * (c) 2018-2018 prooph software GmbH <contact@prooph.de>
  * (c) 2018-2018 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
@@ -37,7 +38,7 @@ class JsonTransformerTest extends TestCase
      */
     public function it_provides_a_json_response()
     {
-        $expectedJson = json_encode(['foo' => 'bar']);
+        $expectedJson = \json_encode(['foo' => 'bar']);
 
         $responsePrototype = $this->prophesize(ResponseInterface::class);
         $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
@@ -59,7 +60,7 @@ class JsonTransformerTest extends TestCase
     public function it_throws_invalid_argument_exception_if_result_cannot_be_json_encoded()
     {
         //JSON encode only works with utf-8 encoding
-        $wrongEncodedResult = ['foo' => mb_convert_encoding('üäö', 'ISO-8859-1')];
+        $wrongEncodedResult = ['foo' => \mb_convert_encoding('üäö', 'ISO-8859-1')];
 
         $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
 

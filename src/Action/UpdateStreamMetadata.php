@@ -1,6 +1,7 @@
 <?php
+
 /**
- * This file is part of the prooph/event-store-http-middleware.
+ * This file is part of prooph/event-store-http-middleware.
  * (c) 2018-2018 prooph software GmbH <contact@prooph.de>
  * (c) 2018-2018 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
@@ -49,9 +50,9 @@ final class UpdateStreamMetadata implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $streamName = urldecode($request->getAttribute('streamname'));
+        $streamName = \urldecode($request->getAttribute('streamname'));
 
-        if (! in_array($request->getHeaderLine('Content-Type'), $this->validRequestContentTypes)) {
+        if (! \in_array($request->getHeaderLine('Content-Type'), $this->validRequestContentTypes)) {
             return $this->responseFactory->createResponse(415);
         }
 

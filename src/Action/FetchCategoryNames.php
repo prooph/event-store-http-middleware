@@ -1,6 +1,7 @@
 <?php
+
 /**
- * This file is part of the prooph/event-store-http-middleware.
+ * This file is part of prooph/event-store-http-middleware.
  * (c) 2018-2018 prooph software GmbH <contact@prooph.de>
  * (c) 2018-2018 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
@@ -54,14 +55,14 @@ final class FetchCategoryNames implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        if (! array_key_exists($request->getHeaderLine('Accept'), $this->transformers)) {
+        if (! \array_key_exists($request->getHeaderLine('Accept'), $this->transformers)) {
             return $this->responseFactory->createResponse(415);
         }
 
         $filter = $request->getAttribute('filter');
 
         if (null !== $filter) {
-            $filter = urldecode($filter);
+            $filter = \urldecode($filter);
         }
 
         $queryParams = $request->getQueryParams();
