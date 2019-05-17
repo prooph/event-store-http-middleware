@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Prooph\EventStore\Http\Middleware\Action;
 
-use Interop\Http\Factory\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Prooph\EventStore\ReadOnlyEventStore;
 use Prooph\EventStore\StreamName;
 use Psr\Http\Message\ResponseInterface;

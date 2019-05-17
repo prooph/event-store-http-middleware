@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace ProophTest\EventStore\Http\Middleware\Container\Action;
 
-use Interop\Http\Factory\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prooph\EventStore\Http\Middleware\Action\FetchProjectionState;
 use Prooph\EventStore\Http\Middleware\Container\Action\FetchProjectionStateFactory;

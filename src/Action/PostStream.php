@@ -16,7 +16,7 @@ namespace Prooph\EventStore\Http\Middleware\Action;
 use ArrayIterator;
 use DateTimeImmutable;
 use DateTimeZone;
-use Interop\Http\Factory\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Prooph\Common\Messaging\MessageDataAssertion;
 use Prooph\Common\Messaging\MessageFactory;
 use Prooph\EventStore\EventStore;

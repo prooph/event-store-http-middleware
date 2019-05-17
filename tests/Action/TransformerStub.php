@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace ProophTest\EventStore\Http\Middleware\Action;
 
-use Interop\Http\Factory\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Prooph\EventStore\Http\Middleware\Transformer;
 use Psr\Http\Message\ResponseInterface;
 

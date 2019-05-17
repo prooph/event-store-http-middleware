@@ -16,7 +16,7 @@ namespace ProophTest\EventStore\Http\Middleware\Action;
 use ArrayIterator;
 use DateTimeImmutable;
 use DateTimeZone;
-use Interop\Http\Factory\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prooph\Common\Messaging\MessageFactory;
 use Prooph\EventStore\EventStore;

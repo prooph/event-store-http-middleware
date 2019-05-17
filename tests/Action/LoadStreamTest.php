@@ -17,7 +17,7 @@ use ArrayIterator;
 use DateTimeImmutable;
 use DateTimeZone;
 use EmptyIterator;
-use Interop\Http\Factory\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prooph\Common\Messaging\MessageConverter;
 use Prooph\Common\Messaging\NoOpMessageConverter;

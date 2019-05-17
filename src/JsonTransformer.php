@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Prooph\EventStore\Http\Middleware;
 
-use Interop\Http\Factory\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Prooph\EventStore\Http\Middleware\Exception\InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 
