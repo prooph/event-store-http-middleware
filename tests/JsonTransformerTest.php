@@ -2,8 +2,8 @@
 
 /**
  * This file is part of prooph/event-store-http-middleware.
- * (c) 2018-2018 prooph software GmbH <contact@prooph.de>
- * (c) 2018-2018 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
+ * (c) 2018-2019 prooph software GmbH <contact@prooph.de>
+ * (c) 2018-2019 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,11 +13,11 @@ declare(strict_types=1);
 
 namespace ProophTest\EventStore\Http\Middleware;
 
-use Interop\Http\Factory\ResponseFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prooph\EventStore\Http\Middleware\Exception\InvalidArgumentException;
 use Prooph\EventStore\Http\Middleware\JsonTransformer;
 use Prophecy\Argument;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
@@ -62,7 +62,10 @@ class JsonTransformerTest extends TestCase
         //JSON encode only works with utf-8 encoding
         $wrongEncodedResult = ['foo' => \mb_convert_encoding('üäö', 'ISO-8859-1')];
 
+        $responsePrototype = $this->prophesize(ResponseInterface::class);
         $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+
+        $responseFactory->createResponse()->willReturn($responsePrototype)->shouldBeCalled();
 
         $this->expectException(InvalidArgumentException::class);
 

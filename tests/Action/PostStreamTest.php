@@ -2,8 +2,8 @@
 
 /**
  * This file is part of prooph/event-store-http-middleware.
- * (c) 2018-2018 prooph software GmbH <contact@prooph.de>
- * (c) 2018-2018 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
+ * (c) 2018-2019 prooph software GmbH <contact@prooph.de>
+ * (c) 2018-2019 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -16,7 +16,6 @@ namespace ProophTest\EventStore\Http\Middleware\Action;
 use ArrayIterator;
 use DateTimeImmutable;
 use DateTimeZone;
-use Interop\Http\Factory\ResponseFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prooph\Common\Messaging\MessageFactory;
 use Prooph\EventStore\EventStore;
@@ -27,6 +26,7 @@ use Prooph\EventStore\Stream;
 use Prooph\EventStore\StreamName;
 use Prooph\EventStore\TransactionalEventStore;
 use Prophecy\Argument;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Ramsey\Uuid\Uuid;

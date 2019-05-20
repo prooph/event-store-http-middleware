@@ -2,8 +2,8 @@
 
 /**
  * This file is part of prooph/event-store-http-middleware.
- * (c) 2018-2018 prooph software GmbH <contact@prooph.de>
- * (c) 2018-2018 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
+ * (c) 2018-2019 prooph software GmbH <contact@prooph.de>
+ * (c) 2018-2019 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -17,7 +17,6 @@ use ArrayIterator;
 use DateTimeImmutable;
 use DateTimeZone;
 use EmptyIterator;
-use Interop\Http\Factory\ResponseFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prooph\Common\Messaging\MessageConverter;
 use Prooph\Common\Messaging\NoOpMessageConverter;
@@ -32,6 +31,7 @@ use Prooph\EventStore\Metadata\MetadataMatcher;
 use Prooph\EventStore\Metadata\Operator;
 use Prooph\EventStore\StreamName;
 use Prophecy\Argument;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
