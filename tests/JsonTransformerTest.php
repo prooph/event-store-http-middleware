@@ -62,7 +62,10 @@ class JsonTransformerTest extends TestCase
         //JSON encode only works with utf-8 encoding
         $wrongEncodedResult = ['foo' => \mb_convert_encoding('üäö', 'ISO-8859-1')];
 
+        $responsePrototype = $this->prophesize(ResponseInterface::class);
         $responseFactory = $this->prophesize(ResponseFactoryInterface::class);
+
+        $responseFactory->createResponse()->willReturn($responsePrototype)->shouldBeCalled();
 
         $this->expectException(InvalidArgumentException::class);
 
