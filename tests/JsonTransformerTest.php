@@ -2,8 +2,8 @@
 
 /**
  * This file is part of prooph/event-store-http-middleware.
- * (c) 2018-2018 prooph software GmbH <contact@prooph.de>
- * (c) 2018-2018 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
+ * (c) 2018-2019 prooph software GmbH <contact@prooph.de>
+ * (c) 2018-2019 Sascha-Oliver Prolic <saschaprolic@googlemail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,11 +13,11 @@ declare(strict_types=1);
 
 namespace ProophTest\EventStore\Http\Middleware;
 
-use Psr\Http\Message\ResponseFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prooph\EventStore\Http\Middleware\Exception\InvalidArgumentException;
 use Prooph\EventStore\Http\Middleware\JsonTransformer;
 use Prophecy\Argument;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
